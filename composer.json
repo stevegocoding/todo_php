@@ -1,0 +1,27 @@
+{
+  "name": "stevegocoding/todo_php",
+  "description": "A simple todo app powered by Slim framework",
+  "keywords": ["framework", "slim", "mvc", "todo_php"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Guangfu Shi",
+      "email": "stevegocoding@gmail.com",
+      "role": "developer"
+    }
+  ],
+  "require": {
+    "php": ">= 5.5.0",
+    "slim/slim": "2.4.*",
+    "slim/views":"0.1.2",
+    "twig/twig": "1.*",
+    "twig/extensions": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "lib/",
+      "App\\Controller\\": "app/controllers/"
+    }
+  },
+  "minimum-stability": "dev"
+}
