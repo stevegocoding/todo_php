@@ -2,15 +2,13 @@
 
 namespace App\Controller;
 
-class HomeController 
+class HomeController extends \App\Controller\AppController
 {
-  protected $app; 
-  
   public function __construct(\SlimCustom $app) {
-    $this->app = $app;
+    parent::__construct($app);
   }
   
   public function hello() {
     echo '<p> Hello </p>'; 
   }
-};
+}

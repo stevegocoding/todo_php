@@ -1,1 +1,4 @@
-vendor
+.sass-cache/
+vendor/
+node_modules/
+bower_components/

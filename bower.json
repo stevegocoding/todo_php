@@ -1,0 +1,21 @@
+{
+  "name": "todo_php",
+  "version": "0.0.1",
+  "homepage": "https://github.com/stevegocoding/todo_php",
+  "authors": [
+    "stevegocoding <stevegocoding@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass-official": "~3.3.3",
+    "font-awesome": "~4.3.0",
+    "jquery": "~2.1.3"
+  }
+}

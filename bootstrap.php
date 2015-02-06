@@ -35,10 +35,11 @@ $app = new SlimCustom($config['slim']);
 /** 
  * Register controllers to container
  **/
-$app->container->singleton('App/Home', function($container) {
-  return new \App\Controller\HomeController($app);
+$app->container->singleton('App/Dashboard', function($container) {
+  return new \App\Controller\DashboardController($app);
 });
 
-$app->get('/', '\App\Controller\HomeController:hello');
+
+$app->get('/', '\App\Controller\DashboardController:index');
 
 return $app;
