@@ -1,0 +1,35 @@
+.main-top-section {
+  height: $content-topbar-height;
+  @include separator_line;
+
+  .top-search-bar {
+    padding-top: 10px;
+    @include span(1 wide of 4);
+    display: inline; 
+    .task-filter-form {
+      // @include inline-icon(null 10px null null);
+      // @include icon-before($fa-var-search, 15px, 5px);
+      padding-left: gutter(4);
+    }
+  }
+  .top-icons-list {
+    @include horizontal-list(false);
+    padding-top: 10px;
+    padding-left: span(2 wide of 4);
+    margin-right: 0;
+    
+    .top-icons-item {
+    }
+    
+    .add-task {
+      @include icon-before-color($fa-var-plus, 15px, 30px, $darkgray);
+    }
+    .options {
+      @include icon-before-color($fa-var-cog, 15px, 0, $darkgray);
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
