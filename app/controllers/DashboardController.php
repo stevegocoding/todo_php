@@ -9,6 +9,6 @@ class DashboardController extends \App\Controller\AppController
   }
 
   public function index() {
-    $this->app->render('layout/dashboard.twig');
+    $this->app->render('layout/dashboard.twig', $this->viewData);
   }
 }

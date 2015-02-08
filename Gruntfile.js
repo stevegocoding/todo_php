@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         // Bower components folder will be removed afterwards 
         clean: false
       },
-      dev: {
+      stylesheets_js: {
         options: {
           destPrefix: 'vendor/assets'
         },
@@ -43,14 +43,22 @@ module.exports = function (grunt) {
           
           // Font-awesome
           'stylesheets/font-awesome': 'font-awesome/scss/*.scss',
-          'fonts': 'font-awesome/fonts',
 
           // jQuery
           'javascripts/jquery-min.js': 'jquery/dist/jquery.min.js'
         }
+      },
+      fonts: {
+        options: {
+          destPrefix: 'public/assets/fonts'
+        },
+        files: {
+          'public/assets/fonts': 'font-awesome/fonts',
+        }
       }
     },
     compass: {
+      /*
       dist: {
         options: {
           specify: stylesDevPath + '/app.scss',
@@ -59,14 +67,15 @@ module.exports = function (grunt) {
           outputStyle: 'compressed'
         }
       },
+      */
       dev: {
         options: {
           sassDir: stylesDevPath,
           cssDir: stylesDistPath,
           relativeAssets: false,
+          require: 'susy',
           environment: 'development',
           outputStyle: 'expanded'
-          
         }
       }
     },
@@ -78,12 +87,16 @@ module.exports = function (grunt) {
         files: ['app/views/*.twig', 'app/views/layout/*.twig']
       },
       scss: {
-        files: [stylesDevPath + '/*.scss'],
-        tasks: ['compass:dev']                             
+        files: [stylesDevPath + '/**/*.scss'],
+        tasks: ['compass:dev'],
+        options: {
+          livereload: true
+        }
+        
       }
     }
   });
   
   // Register Tasks
-  grunt.registerTask('default', ['watch']);
+  grunt.registerTask('default', ['compass:dev', 'watch']);
 };

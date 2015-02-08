@@ -1,0 +1,35 @@
+// Susy Config 
+$total-columns  : 12;
+$column-width   : 4em;
+$gutter_width   : 1em;
+$grid-padding   : $gutter-width;
+
+$small          : 30em;
+$medium         : 47em;
+$large          : 75em;
+
+$susy: (
+  debug: (
+    image: show,
+    color: blue,
+    output: overlay,
+    toggle: top right,
+  ),
+);
+
+@include border-box-sizing;
+
+.sidebar-wrapper {
+  @include container;
+  @include span(2 of 12);
+  @include push(3 wide of 12);
+  
+  background-color: $color-bg;
+}
+
+.main-wrapper {
+  @include container;
+  @include span(4 of 12);
+  
+  background-color: $blue;
+}
