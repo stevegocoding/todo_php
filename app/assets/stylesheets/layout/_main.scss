@@ -1,22 +1,25 @@
 .main-top-section {
   height: $content-topbar-height;
   @include separator_line;
+  margin-left: gutter();
 
   .top-search-bar {
     padding-top: 10px;
     @include span(1 wide of 4);
-    display: inline; 
+    display: inline-block; 
+    .toggle-sidebar {
+      display: inline-block;
+    }
     .task-filter-form {
       // @include inline-icon(null 10px null null);
-      // @include icon-before($fa-var-search, 15px, 5px);
-      padding-left: gutter(4);
+      // @include icon-before($fa-var-bars, 15px, 5px);
+      margin-left: 30px;
     }
   }
   .top-icons-list {
     @include horizontal-list(false);
     padding-top: 10px;
-    padding-left: span(2 wide of 4);
-    margin-right: 0;
+    padding-left: span(4 wide of 8);
     
     .top-icons-item {
     }

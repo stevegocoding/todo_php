@@ -1,35 +1,50 @@
 // Susy Config 
+/*
 $total-columns  : 12;
 $column-width   : 4em;
 $gutter_width   : 1em;
 $grid-padding   : $gutter-width;
+*/
 
 $small          : 30em;
 $medium         : 47em;
 $large          : 75em;
 
 $susy: (
+  math: static,
+  columns: 8,
+  column-width: 60px,
+  gutters: 1/4,
+
   debug: (
     image: show,
     color: blue,
     output: overlay,
     toggle: top right,
-  ),
+  )
 );
 
 @include border-box-sizing;
 
-.sidebar-wrapper {
-  @include container;
-  @include span(2 of 12);
-  @include push(3 wide of 12);
+body {
+  @include container($susy);
   
-  background-color: $color-bg;
+  @include susy-breakpoint($medium) {
+    @include container(12);
+  }
+}
+
+.sidebar-wrapper {
+  display: none;
+  @include susy-breakpoint($medium) {
+    display: block;
+    @include span(4);
+    background-color: $color-bg;
+  }
 }
 
 .main-wrapper {
-  @include container;
-  @include span(4 of 12);
-  
+  // @include container;
+  @include span(8 last);
   background-color: #fff;
 }
