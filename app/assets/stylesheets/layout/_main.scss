@@ -21,9 +21,6 @@
     padding-top: 10px;
     padding-left: span(4 wide of 8);
     
-    .top-icons-item {
-    }
-    
     .add-task {
       @include icon-before-color($fa-var-plus, 15px, 30px, $darkgray);
     }
@@ -32,6 +29,9 @@
     }
     a {
       text-decoration: none;
+      &:hover {
+        color: lighten($lightgray, 10%);
+      }
     }
   }
 }
