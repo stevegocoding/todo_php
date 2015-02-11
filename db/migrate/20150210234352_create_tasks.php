@@ -27,9 +27,9 @@ class CreateTasks extends AbstractMigration
         (
           task_id         INT             PRIMARY KEY     AUTO_INCREMENT,
           task_desc       VARCHAR(255)    NOT NULL,
-          task_due_date   DATE            NOT NULL,
-          task_done_date  DATE            DEFAULT NULL,
-          parent_task_id  INT             DEFAULT NULL,
+          task_due_date   DATETIME        NOT NULL,
+          task_done_date  DATETIME        DEFAULT NULL,
+          parent_task_id  INT             NULL            DEFAULT NULL,
           project_id      INT             NOT NULL,
           created_on      TIMESTAMP       NOT NULL,
           CONSTRAINT tasks_fk_projects
@@ -43,7 +43,6 @@ class CreateTasks extends AbstractMigration
             ON DELETE SET NULL
             ON UPDATE CASCADE
         ) ENGINE=InnoDB;
-        CHARSET utf8 COLLATE utf8_general_ci;
         ";
       $this->execute($sql);
     }

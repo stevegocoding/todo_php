@@ -35,7 +35,6 @@ class CreateProjects extends AbstractMigration
             ON DELETE CASCADE
             ON UPDATE CASCADE
         ) ENGINE=InnoDB;
-        CHARSET utf8 COLLATE utf8_general_ci;
         ";
         $this->execute($sql);
     }
