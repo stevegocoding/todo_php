@@ -21,6 +21,14 @@ module.exports = function (grunt) {
   // Project configuration
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    
+    /*********************************************
+     * Front-end work flow tasks
+     *  - clean
+     *  - bower copy
+     *  - compass/sass preprocessing
+     *  - js concation/uglify
+     ********************************************/
     clean: {
       build: {
         src: [jsDistPath + '/*.js', stylesDistPath + '/*.css', 'vendor/assets']

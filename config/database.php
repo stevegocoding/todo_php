@@ -1,9 +1,8 @@
 <?php
 
 $config['database'] = array(
-  'default' => 'mysql',
-  'connections' => array(
-    'mysql' => array(
+  'development' => array(
+    'connection' => array(
       'driver' => 'mysql',
       'host' => 'localhost',
       'database' => 'todo_dev',
@@ -13,5 +12,7 @@ $config['database'] = array(
       'collation' => 'utf8_unicode_ci',
       'prefix' => ''
     )
+  ),
+  'production' => array(
   )
 );
