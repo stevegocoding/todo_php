@@ -92,8 +92,13 @@
         <div class="tasks-group-content">
           <ul class="tasks-list">
             {{#tasks}}
-              <li class="task_item">
+              <li class="task-item">
+              <div class="checkbox">
+                <input id="task-id-{{task_id}}" class="task-checkbox" type="checkbox">
+              </div>
+              <div class="task-data">
                 {{ task_desc }}
+              </div>
               </li>
             {{/tasks}}
           </ul>

@@ -36,3 +36,33 @@
   }
 }
 
+// Main content section 
+.main-content-section {
+  margin: 30px 2*gutter() 50px 2*gutter();
+  
+  .tasks-group-header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    .header {
+      font-size: $font-size-task-header;
+    }
+  }
+  
+  .tasks-group-content {
+    
+    .checkbox {
+      display: inline-block;
+    }
+
+    .task-item {
+      border-bottom: 1px solid lighten($lightgray, 20%);
+      //margin-left: gutter(); 
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .task-data {
+      display: inline-block;
+    }
+  }
+}
