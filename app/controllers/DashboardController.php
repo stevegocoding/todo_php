@@ -11,9 +11,6 @@ class DashboardController extends \App\Controller\AppController
 
   public function index() 
   {
-    //$this->app->render('dashboard/index.twig', $this->viewData);
-    
-    
     $viewData = array(
       'tasks_groups' => array(
         array(
