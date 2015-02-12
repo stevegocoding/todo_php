@@ -10,8 +10,9 @@ $config['slim'] = array(
   'log.enabled' => true, 
 
   // View
-  'view' => new \Slim\Views\Twig(),
-  'templates.path' => APP_PATH.'views',
+  // 'view' => new \Slim\Views\Twig(),
+  'view' => new \Slim\Handlebars\Handlebars(),
+  'templates.path' => APP_PATH.'views/templates',
 
   // HTTP
   'http.version' => '1.1', 
