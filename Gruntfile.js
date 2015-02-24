@@ -12,11 +12,9 @@ module.exports = function (grunt) {
   var LIVERELOAD_PORT = 8000;
   
   // Load the tasks
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compass');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-bowercopy');
+  grunt.loadNpmTasks('grunt-broccoli-fc');
 
   // Project configuration
   grunt.initConfig({
@@ -26,14 +24,16 @@ module.exports = function (grunt) {
      * Front-end work flow tasks
      *  - clean
      *  - bower copy
-     *  - compass/sass preprocessing
-     *  - js concation/uglify
      ********************************************/
     clean: {
       build: {
-        src: [jsDistPath + '/*.js', stylesDistPath + '/*.css', 'vendor/assets']
+        src: [jsDistPath + '/*.js', stylesDistPath + '/*.css']
       }
     },
+    
+    /**
+     * Bowercopy: copy the required assets to proper directories
+     **/
     bowercopy: {
       options: {
         // Bower components folder will be removed afterwards 
@@ -65,46 +65,29 @@ module.exports = function (grunt) {
         }
       }
     },
-    compass: {
-      /*
-      dist: {
-        options: {
-          specify: stylesDevPath + '/app.scss',
-          cssDir: stylesDistPath,
-          environment: 'production',
-          outputStyle: 'compressed'
-        }
-      },
-      */
+    broccoli: {
       dev: {
-        options: {
-          sassDir: stylesDevPath,
-          cssDir: stylesDistPath,
-          relativeAssets: false,
-          require: 'susy',
-          environment: 'development',
-          outputStyle: 'expanded'
-        }
-      }
-    },
-    watch: {
-      liverelaod: {
-        options: {
-          livereload: true
-        },
-        files: ['app/views/*.twig', 'app/views/layout/*.twig']
+        env:  'development',
+        dest: 'public/assets/',
+        config: 'Brocfile.js'
       },
-      scss: {
-        files: [stylesDevPath + '/**/*.scss'],
-        tasks: ['compass:dev'],
-        options: {
-          livereload: true
-        }
-        
+      prod: {
+        env:  'production',
+        dest: 'public/assets/',
+        config: 'Brocfile.js'
       }
     }
   });
   
   // Register Tasks
-  grunt.registerTask('default', ['compass:dev', 'watch']);
+  grunt.registerTask('default', 'build:debug');
+  grunt.registerTask('watch', 'build:watch');
+  grunt.registerTask('clear', 'build:clean');
+
+  grunt.registerTask('copyfonts', ['bowercopy:fonts']);
+  grunt.registerTask('build', ['build:debug']);
+  grunt.registerTask('build:debug', ['clear', 'broccoli:dev:build', 'copyfonts']);
+  grunt.registerTask('build:prod', ['clear', 'broccoli:prod:build', 'copyfonts']);
+  grunt.registerTask('build:watch', ['broccoli:dev:watch']);
+  grunt.registerTask('build:clean', ['clean']);
 };

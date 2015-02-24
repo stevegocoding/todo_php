@@ -1,4 +1,6 @@
 .sass-cache/
+.DS_Store
+tmp/
 public/assets/
 vendor/
 node_modules/
