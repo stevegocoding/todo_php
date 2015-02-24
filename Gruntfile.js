@@ -2,12 +2,13 @@ module.exports = function (grunt) {
   // Dev Assets Path
   var assetDevRootPath = 'app/assets/';
   var jsDevPath = assetDevRootPath + 'javascripts';
-  var stylesDevPath = assetDevRootPath + 'stylesheets';
+  var stylesDevPath = assetDevRootPath + 'stylesheets'
   
   // Production Assets Path
   var assetDistRootPath = 'public/assets/';
-  var jsDistPath = assetDistRootPath + 'javascripts';
-  var stylesDistPath = assetDistRootPath + 'stylesheets';
+  var jsDistPath = assetDistRootPath + 'js';
+  var stylesDistPath = assetDistRootPath + 'styles';
+  var fontsDistPath = assetDistRootPath + 'fonts';
   
   var LIVERELOAD_PORT = 8000;
   
@@ -27,7 +28,7 @@ module.exports = function (grunt) {
      ********************************************/
     clean: {
       build: {
-        src: [jsDistPath + '/*.js', stylesDistPath + '/*.css']
+        src: [assetDistRootPath]
       }
     },
     
@@ -36,13 +37,10 @@ module.exports = function (grunt) {
      **/
     bowercopy: {
       options: {
-        // Bower components folder will be removed afterwards 
+        destPrefix: 'vendor/assets',
         clean: false
       },
       stylesheets_js: {
-        options: {
-          destPrefix: 'vendor/assets'
-        },
         files: {
           // Bootstrap
           'stylesheets/bootstrap': 'bootstrap-sass-official/assets/stylesheets/_bootstrap.scss',
@@ -57,11 +55,8 @@ module.exports = function (grunt) {
         }
       },
       fonts: {
-        options: {
-          destPrefix: 'public/assets/fonts'
-        },
         files: {
-          'public/assets/fonts': 'font-awesome/fonts',
+          'fonts/font-awesome': 'font-awesome/fonts',
         }
       }
     },
@@ -84,10 +79,9 @@ module.exports = function (grunt) {
   grunt.registerTask('watch', 'build:watch');
   grunt.registerTask('clear', 'build:clean');
 
-  grunt.registerTask('copyfonts', ['bowercopy:fonts']);
   grunt.registerTask('build', ['build:debug']);
-  grunt.registerTask('build:debug', ['clear', 'broccoli:dev:build', 'copyfonts']);
-  grunt.registerTask('build:prod', ['clear', 'broccoli:prod:build', 'copyfonts']);
+  grunt.registerTask('build:debug', ['clear', 'broccoli:dev:build']);
+  grunt.registerTask('build:prod', ['clear', 'broccoli:prod:build']);
   grunt.registerTask('build:watch', ['broccoli:dev:watch']);
   grunt.registerTask('build:clean', ['clean']);
 };

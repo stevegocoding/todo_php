@@ -73,7 +73,17 @@ if (env === 'production') {
   });
 }
 
+/******************************************************
+ * Fonts
+ *******************************************************/
+var vendorFontsTree = 'vendor/assets/fonts';
+var appFonts = new Funnel(vendorFontsTree, {
+  files: ['fontawesome-webfont.ttf'],
+  srcDir: 'font-awesome',
+  destDir: 'fonts'
+});
+
 appJS = new Funnel(appJS, {destDir: 'js'});
 vendorJS = new Funnel(vendorJS, {destDir: 'js'});
 
-module.exports = mergeTrees([appJS, vendorJS, appCss], {overwrite: true});
+module.exports = mergeTrees([appJS, vendorJS, appCss, appFonts], {overwrite: true});
