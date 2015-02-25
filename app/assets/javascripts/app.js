@@ -1,5 +1,9 @@
-App = Ember.Application.create();
-
-App.IndexRoute = Ember.Route.extend({
-  
+App = Ember.Application.create({
 });
+
+/*
+App.Router.map(function() {
+  this.resource('projects');
+});
+*/
+

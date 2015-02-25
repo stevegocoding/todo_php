@@ -2,6 +2,7 @@ var Funnel                  = require('broccoli-funnel');
 var mergeTrees              = require('broccoli-merge-trees');
 var findBowerTrees          = require('broccoli-bower');
 var uglifyJavaScript        = require('broccoli-uglify-js');
+var compileTemplates        = require('ember-cli-htmlbars');
 var concatFiles             = require('broccoli-concat');
 var compileSass             = require('broccoli-compass');
 var debug                   = require('broccoli-stew').debug;
@@ -43,16 +44,14 @@ if (env === 'production') {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
     'ember/ember.min.js',
-    'ember/ember-template-compiler.js',
-    'handlebars/handlebars.min.js'
+    'handlebars/handlebars.runtime.min.js'
   ]; 
 }
 else {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
     'ember/ember.debug.js',
-    'ember/ember-template-compiler.js',
-    'handlebars/handlebars.js'
+    'handlebars/handlebars.runtime.js'
   ]; 
 }
 
@@ -74,16 +73,33 @@ if (env === 'production') {
 }
 
 /******************************************************
+ * Handlebars Templates Compile
+ *******************************************************/
+var templatesTree = new Funnel(appTree, {
+  srcDir: 'templates',
+  destDir: 'templates'
+});
+var appTemplates = compileTemplates(templatesTree, {
+  module: false,
+  isHTMLBars: true,
+  templateCompiler: require('./bower_components/ember/ember-template-compiler')
+});
+appTemplates = concatFiles(appTemplates, {
+  inputFiles: ['**/*.js'],
+  outputFile: '/templates.js'
+});
+
+/******************************************************
  * Fonts
  *******************************************************/
 var vendorFontsTree = 'vendor/assets/fonts';
 var appFonts = new Funnel(vendorFontsTree, {
-  files: ['fontawesome-webfont.ttf'],
   srcDir: 'font-awesome',
   destDir: 'fonts'
 });
 
 appJS = new Funnel(appJS, {destDir: 'js'});
+appTemplates = new Funnel(appTemplates, {destDir: 'js'});
 vendorJS = new Funnel(vendorJS, {destDir: 'js'});
 
-module.exports = mergeTrees([appJS, vendorJS, appCss, appFonts], {overwrite: true});
+module.exports = mergeTrees([appJS, appTemplates, vendorJS, appCss, appFonts], {overwrite: true});

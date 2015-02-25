@@ -82,6 +82,6 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['build:debug']);
   grunt.registerTask('build:debug', ['clear', 'broccoli:dev:build']);
   grunt.registerTask('build:prod', ['clear', 'broccoli:prod:build']);
-  grunt.registerTask('build:watch', ['broccoli:dev:watch']);
+  grunt.registerTask('build:watch', ['clear', 'broccoli:dev:watch']);
   grunt.registerTask('build:clean', ['clean']);
 };

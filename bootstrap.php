@@ -39,7 +39,6 @@ $app->container->singleton('App/Dashboard', function($container) {
   return new \App\Controller\DashboardController($app);
 });
 
-
 $app->get('/', '\App\Controller\DashboardController:index');
 
 return $app;
