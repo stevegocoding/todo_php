@@ -27,6 +27,10 @@ if (isset($config['cookies'])) {
   }
 }
 
+$mode = $config['slim']['mode'];
+$dbConfig = $config['database'][$mode];
+\App\Helpers\DBConFactory::config($dbConfig['connection']);
+
 /**
  * Initialize Slim Application
  **/
@@ -38,7 +42,11 @@ $app = new SlimCustom($config['slim']);
 $app->container->singleton('App/Dashboard', function($container) {
   return new \App\Controller\DashboardController($app);
 });
+$app->container->singleton('App/Projects', function($container) {
+  return new \App\Controller\ProjectsController($app);
+});
 
-$app->get('/', '\App\Controller\DashboardController:index');
+$app->get('/test', '\App\Controller\DashboardController:index');
+$app->get('/projects', '\App\Controller\ProjectsController:index');
 
 return $app;

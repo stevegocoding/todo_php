@@ -44,6 +44,7 @@ if (env === 'production') {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
     'ember/ember.min.js',
+    'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.min.js'
   ]; 
 }
@@ -51,6 +52,7 @@ else {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
     'ember/ember.debug.js',
+    'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.js'
   ]; 
 }

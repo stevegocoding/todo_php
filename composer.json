@@ -24,7 +24,8 @@
   "autoload": {
     "psr-4": {
       "": "lib/",
-      "App\\Controller\\": "app/controllers/"
+      "App\\Controller\\": "app/controllers/",
+      "App\\Helpers\\": "app/helpers/"
     }
   },
   "minimum-stability": "dev"
