@@ -12,13 +12,32 @@ var debug                   = require('broccoli-stew').debug;
  ******************************************************/
 var env = process.env.BROCCOLI_ENV || 'development';
 
+
+/******************************************************
+ * Global
+ *******************************************************/
+var vendorTree = 'bower_components';
+var appAssetsTree = 'app/assets/';
+
 /******************************************************
  * Stylesheets Assets
  *******************************************************/
-var stylesTree = new Funnel('app/assets/', {
+var jqueryUIThemeName = 'smoothness';
+var jqueryUIThemePath = 'jquery-ui/themes/' + jqueryUIThemeName + '/';
+var jqueryUIThemeTree = new Funnel(vendorTree, {
+  srcDir: 'jquery-ui/themes/' + jqueryUIThemeName
 });
 
-var appCss = compileSass(stylesTree, {
+var vendorCssFiles = [
+    jqueryUIThemePath + 'jquery-ui.min.css'
+];
+
+var vendorCss = concatFiles(vendorTree, {
+  inputFiles: vendorCssFiles,
+  outputFile: '/vendor.css'
+});
+
+var appCss = compileSass(appAssetsTree, {
   files: ['stylesheets/app.scss'],
   outputStyle: 'expanded',
   sassDir: 'stylesheets',
@@ -38,11 +57,11 @@ appCss = new Funnel(appCss, {
  *******************************************************/
 var appTree = 'app/assets/javascripts';
 var appFiles = ['**/*.js'];
-var vendorTree = 'bower_components';
 var vendorFiles = null;
 if (env === 'production') {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
+    'jquery-ui/jquery-ui.min.js',
     'ember/ember.min.js',
     'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.min.js'
@@ -51,6 +70,7 @@ if (env === 'production') {
 else {
   vendorFiles = [
     'jquery/dist/jquery.min.js',
+    'jquery-ui/jquery-ui.min.js',
     'ember/ember.debug.js',
     'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.js'
@@ -92,10 +112,18 @@ appTemplates = concatFiles(appTemplates, {
 });
 
 /******************************************************
+ * Images
+ *******************************************************/
+var jqueryUIImages= new Funnel(jqueryUIThemeTree, {
+  srcDir: 'images',
+  destDir: 'images'
+});
+
+/******************************************************
  * Fonts
  *******************************************************/
 var vendorFontsTree = 'vendor/assets/fonts';
-var appFonts = new Funnel(vendorFontsTree, {
+var vendorFonts = new Funnel(vendorFontsTree, {
   srcDir: 'font-awesome',
   destDir: 'fonts'
 });
@@ -103,5 +131,6 @@ var appFonts = new Funnel(vendorFontsTree, {
 appJS = new Funnel(appJS, {destDir: 'js'});
 appTemplates = new Funnel(appTemplates, {destDir: 'js'});
 vendorJS = new Funnel(vendorJS, {destDir: 'js'});
+vendorCss = new Funnel(vendorCss, {destDir: 'styles'});
 
-module.exports = mergeTrees([appJS, appTemplates, vendorJS, appCss, appFonts], {overwrite: true});
+module.exports = mergeTrees([appJS, appTemplates, vendorJS, appCss, vendorCss,jqueryUIImages, vendorFonts], {overwrite: true});
