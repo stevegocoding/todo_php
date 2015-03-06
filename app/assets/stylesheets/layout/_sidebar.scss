@@ -90,10 +90,16 @@
   
   .projects-list-item {
     @include sidebar-list-item(20px, 10px 0 10px gutter(2));
+    
+    .menu-toggle-btn {
+      @include icon-before($fa-var-ellipsis-v, 1.5em, 15px);
+    }
+    /*
     a {
       color: #000;
       text-decoration: none;
     }
+    */
   }
   .menu-list-action {
     a {

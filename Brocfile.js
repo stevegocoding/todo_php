@@ -27,6 +27,9 @@ var jqueryUIThemePath = 'jquery-ui/themes/' + jqueryUIThemeName + '/';
 var jqueryUIThemeTree = new Funnel(vendorTree, {
   srcDir: 'jquery-ui/themes/' + jqueryUIThemeName
 });
+var jqueryUIThemeImageTree = new Funnel(jqueryUIThemeTree, {
+  srcDir: 'images'
+});
 
 var vendorCssFiles = [
     jqueryUIThemePath + 'jquery-ui.min.css'
@@ -114,9 +117,8 @@ appTemplates = concatFiles(appTemplates, {
 /******************************************************
  * Images
  *******************************************************/
-var jqueryUIImages= new Funnel(jqueryUIThemeTree, {
-  srcDir: 'images',
-  destDir: 'images'
+var jqueryUIImages= new Funnel(jqueryUIThemeImageTree, {
+  destDir: 'styles/images'
 });
 
 /******************************************************

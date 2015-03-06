@@ -198,9 +198,9 @@
 
   App.IconButtonComponent = Ember.Component.extend({
     tagName: 'a',
-    classNameBindings: ['btnClassName'],
+    classNameBindings: ['btnClass'],
 
-    btnClassName: Ember.computed('btnType', function() {
+    btnClass: Ember.computed('btnType', function() {
       return Ember.String.dasherize(this.get('btnType'));
     }),
 
