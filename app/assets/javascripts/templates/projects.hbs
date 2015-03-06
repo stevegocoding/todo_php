@@ -1,12 +1,3 @@
-<!-- Sidebar menu list, could be projects or labels -->
-<div class="sidebar-menu-list">
-  <ul class="menu-list">
-    {{#each project in controller}}
-      <li class="menu-list-item"><a href="#">{{project.desc}}</a></li>
-    {{/each}}
-  </ul>    
-
-  <div class="menu-list-action">
-    <a href="#">Add Project</a>
-  </div>
-</div>
+{{#sortable-list items=controller.sortedProjects sortedListAction="updatePriorities" as |project| }}
+  {{projects-list-item pid=project.id desc=project.desc}}
+{{/sortable-list}}

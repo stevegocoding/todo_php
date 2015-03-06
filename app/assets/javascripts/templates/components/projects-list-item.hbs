@@ -1,0 +1,9 @@
+<div class="item-wrapper">
+  <span class="sortable-handle"></span>
+  <span class="sortable-list-item-content"> {{pid}} -- {{desc}} </span>
+  {{icon-button btnType="menuToggleBtn" clickAction="show" listItem=this}}
+
+  {{#if isMenuVisible}}
+    {{popup-menu}}
+  {{/if}}
+</div>

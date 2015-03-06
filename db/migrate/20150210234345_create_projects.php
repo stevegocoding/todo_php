@@ -25,10 +25,11 @@ class CreateProjects extends AbstractMigration
       $sql = 
         "CREATE TABLE projects
         (
-          project_id      INT           PRIMARY KEY     AUTO_INCREMENT,
-          project_desc    VARCHAR(50)   NOT NULL,
-          user_id         INT           NOT NULL,
-          created_on      TIMESTAMP     NOT NULL,
+          project_id        INT           PRIMARY KEY     AUTO_INCREMENT,
+          project_desc      VARCHAR(50)   NOT NULL,
+          project_priority  INT           NOT NULL,
+          user_id           INT           NOT NULL,
+          created_on        TIMESTAMP     NOT NULL,
           
           CONSTRAINT projects_fk_users FOREIGN KEY (user_id)
             REFERENCES users (user_id)

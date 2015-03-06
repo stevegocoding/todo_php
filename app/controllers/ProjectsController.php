@@ -20,28 +20,14 @@ class ProjectsController extends \App\Controller\AppController
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    $projects = array('projects' => array());
+    $projects = array();
     foreach ($rows as $proj) {
-      $projects['projects'][] = array(
+      $projects[] = array(
         'id' => $proj['project_id'], 
-        'desc' => $proj['project_desc']
+        'desc' => $proj['project_desc'],
+        'priority' => $proj['project_priority']
       );
     }
-
-    /*
-    $projects = array(
-      'projects' => array(
-        array(
-          'id' => 1,
-          'desc' => 'proj_1'
-        ),
-        array(
-          'id' => 2,
-          'desc' => 'proj_2'
-        )
-      )
-    );
-     */
     
     $this->response->header('Content-Type', 'application/json');
     echo json_encode($projects);

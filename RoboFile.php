@@ -138,11 +138,11 @@ class RoboFile extends \Robo\Tasks
 
   private function fakeProjects($db, $faker)
   {
-    $columnNames = array('project_desc', 'user_id');
+    $columnNames = array('project_desc', 'project_priority', 'user_id');
 
     $data = array();
     for ($i = 0; $i < 5; $i++) {
-      $data[] = array($faker->text(20), 1);
+      $data[] = array($faker->text(20), $i, 1);
     }
     $insertValues = array();
     foreach($data as $d) {
