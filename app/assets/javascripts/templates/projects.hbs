@@ -1,3 +1,5 @@
-{{#sortable-list items=controller.sortedProjects sortedListAction="updatePriorities" as |project| }}
-  {{projects-list-item pid=project.id desc=project.desc}}
-{{/sortable-list}}
+<div class="sidebar-projects-list">
+  {{#sortable-list listType="projectsList" items=controller.sortedProjects sortedListAction="updatePriorities" as |project| }}
+    {{projects-list-item pid=project.id desc=project.desc}}
+  {{/sortable-list}}
+</div>

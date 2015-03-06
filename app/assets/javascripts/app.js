@@ -30,7 +30,6 @@
       }).then(function(data) {
         console.log('Project Model: findAll -- OK!');
         return data.map(function(project) {
-          
           return App.Project.create(project);
         });
       });
@@ -62,49 +61,32 @@
    * Controllers 
    **************************************/
   App.DashboardController = Ember.ObjectController.extend({
-    needs: ['projects'],
-    projectsController: Ember.computed.alias('controllers.projects')
   });
   
   App.ProjectsController = Ember.ArrayController.extend({
-    arrayContentWillChange: function(startIdx, removeAmt, addAmt) {
-      console.log('array content wil change');
-    },
-
-    arrayContentDidChange: function(startIdx, removeAmt, addAmt) {
-      console.log('array content did change');
-    },
-
-    contentArrayWillChange: function(contentArray, start, removeCount, addCount) {
-      console.log('content array will change');
-    },
-
-    contentArrayDidChange: function(contentArray, start, removeCount, addCount) {
-      console.log('content array did change');
-    },
     sortProperties: ['priority'],
     sortedProjects: Ember.computed.alias('arrangedContent', function() {
       console.log('test');
     }),
 
     actions: {
-    updatePriorities: function(priorities) {
-      var i = 0;
-      console.log('---------------------');
-      Ember.beginPropertyChanges();
-      this.get('model').forEach(function(item) {
-        i = i + 1; 
+      updatePriorities: function(priorities) {
+        var i = 0;
+        console.log('---------------------');
+        Ember.beginPropertyChanges();
+        this.get('model').forEach(function(item) {
+          i = i + 1; 
 
-        var id = item.get('id');
-        var p = priorities[id];
-        console.log('id: ' + id + ' -- ' + 'p: '+ p);
+          var id = item.get('id');
+          var p = priorities[id];
+          console.log('id: ' + id + ' -- ' + 'p: '+ p);
 
-        item.set('priority', p);
-      }, this);
-      console.log('counter: ' + i);
-      console.log('---------------------');
-      Ember.endPropertyChanges();
-    }
+          item.set('priority', p);
+        }, this);
+        console.log('counter: ' + i);
+        console.log('---------------------');
+        Ember.endPropertyChanges();
+      }
     }
     
   });
@@ -125,8 +107,11 @@
    **/
   App.SortableListComponent = Ember.Component.extend({
     tagName: 'ul',
-    classNames: ['sortable-list'],
-    itemComponents: Ember.A(),
+    classNameBindings: ['listClass'],
+    
+    listClass: Ember.computed('listType', function() {
+      return (this.get('listType').dasherize());
+    }),
 
     itemsDidChanged: function() {
       console.log('items array changed! ' + this.get('items').get('length'));
@@ -162,18 +147,14 @@
           self.sendAction('sortedListAction', priorities);
         }
       };
-
       this.$().sortable(options);
       this.$().disableSelection();
-    },
-    registerItem: function(item) { 
-      this.get('itemComponents').pushObject(item);
     }
   });
 
   App.ProjectsListItemComponent = Ember.Component.extend({
     tagName: 'li',
-    classNames: ['ui-sortable-handle', 'sortable-list-item'],
+    classNames: ['ui-sortable-handle', 'projects-list-item'],
     attributeBindings: ['pid:data-item-id'],
 
     isMenuVisible: false,
