@@ -22,7 +22,7 @@ var appAssetsTree = 'app/assets/';
 /******************************************************
  * Stylesheets Assets
  *******************************************************/
-var jqueryUIThemeName = 'smoothness';
+var jqueryUIThemeName = 'custom';
 var jqueryUIThemePath = 'jquery-ui/themes/' + jqueryUIThemeName + '/';
 var jqueryUIThemeTree = new Funnel(vendorTree, {
   srcDir: 'jquery-ui/themes/' + jqueryUIThemeName

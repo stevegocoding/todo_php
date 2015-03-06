@@ -94,6 +94,9 @@
     .menu-toggle-btn {
       @include icon-before($fa-var-ellipsis-v, 1.5em, 15px);
     }
+    .sortable-handle {
+      @include icon-before($fa-var-bars, 1.5em, 15px);
+    }
     /*
     a {
       color: #000;

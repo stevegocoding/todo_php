@@ -130,7 +130,7 @@
       var self = this;
       var options = {
         placeholder: 'ui-state-highlight-my',
-        //handle: '.sortable-handle',
+        handle: '.sortable-handle',
         cursor: 'move',
         update: function(evt, ui) {
           var priorities = {};
@@ -154,7 +154,7 @@
 
   App.ProjectsListItemComponent = Ember.Component.extend({
     tagName: 'li',
-    classNames: ['ui-sortable-handle', 'projects-list-item'],
+    classNames: ['ui-sortable-handle', 'sortable-list-item', 'projects-list-item'],
     attributeBindings: ['pid:data-item-id'],
 
     isMenuVisible: false,
