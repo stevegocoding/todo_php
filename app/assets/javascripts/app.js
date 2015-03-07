@@ -114,6 +114,7 @@
   App.SortableListComponent = Ember.Component.extend({
     tagName: 'ul',
     classNameBindings: ['listClass'],
+    listItems: Ember.A([]),
     
     listClass: Ember.computed('listType', function() {
       return (this.get('listType').dasherize());
@@ -130,6 +131,18 @@
     didInsertElement: function() {
       this._initJQueryUISortableList();
       console.log('insert element');
+    },
+    
+    addListItem: function(item) {
+      this.get('listItems').pushObject(item);
+    },
+    
+    clearSelection: function() {
+      this.get('listItems').forEach(function(item, index, enumerable) {
+        if (item.get('isSelected') === true) {
+          item.set('isSelected', false);
+        }
+      });
     },
 
     _initJQueryUISortableList: function() {
@@ -161,14 +174,17 @@
   App.ProjectsListItemComponent = Ember.Component.extend({
     tagName: 'li',
     classNames: ['ui-sortable-handle', 'sortable-list-item', 'projects-list-item'],
+    classNameBindings: ['isSelected'],
     attributeBindings: ['pid:data-item-id'],
     isMenuVisible: false,
+    isSelected: false,
+    
+    parentList: Ember.computed.alias('parentView'),
 
     init: function() {
       this._super();
-      //this.get('sortableList').registerItem(this);
+      this.get('parentList').addListItem(this);
     },
-
     didInsertElement: function() {
       this._hideDragHandle();
     }, 
@@ -178,16 +194,18 @@
     hideMenu: function() {
       this.set('isMenuVisible', false);
     },
-
     toggleMenu: function() {
       var cur = this.get('isMenuVisible');
       this.set('isMenuVisible', !cur);
     },
 
+    click: function() {
+      this.get('parentList').clearSelection();
+      this.set('isSelected', true);
+    },
     mouseEnter: function() {
       this._showDragHandle();
     },
-
     mouseLeave: function() {
       this._hideDragHandle();
     },

@@ -96,6 +96,14 @@
     @include sidebar-list(20px 0 20px 0);
   }
   .projects-list-item {
+    .sortable-list-item-content {
+      color: black;
+    }
+    &.is-selected {
+      .sortable-list-item-content {
+        font-weight: bold;
+      }
+    }
     position: relative;
     @include sidebar-list-item(20px, 10px 0 10px gutter(2));
     .menu-toggle-btn {
@@ -128,5 +136,14 @@
   @include popup-menu(50%, 90%);
   @include box-shadow(rgba(black, 0.4) 0 0 25px, rgba(black, 0.2) 0 0 3px 1px inset);
   width: 200px;
+  
+  .project-menu-entry {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px ;
+    border-bottom-style: solid;
+    border-bottom-width:1px;
+  }
+  
 }
 
