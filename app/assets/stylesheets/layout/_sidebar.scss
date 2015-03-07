@@ -6,6 +6,7 @@
   @include margin($margin);
   margin-left: gutter();
 } 
+
 @mixin sidebar-list-item($heigh, $margin: null null null null) {
   @include padding($margin); 
   
@@ -18,6 +19,13 @@
   &:hover {
     background-color: #fafafa;
   }
+}
+
+@mixin popup-menu($top, $left) {
+  position: absolute;
+  top: $top;
+  left: $left;
+  z-index: 999;
 }
 
 .sidebar-banner {
@@ -87,22 +95,17 @@
   .projects-list {
     @include sidebar-list(20px 0 20px 0);
   }
-  
   .projects-list-item {
+    position: relative;
     @include sidebar-list-item(20px, 10px 0 10px gutter(2));
-    
     .menu-toggle-btn {
+      position: absolute;
+      right: 10%;
       @include icon-before($fa-var-ellipsis-v, 1.5em, 15px);
     }
     .sortable-handle {
       @include icon-before($fa-var-bars, 1.5em, 15px);
     }
-    /*
-    a {
-      color: #000;
-      text-decoration: none;
-    }
-    */
   }
   .menu-list-action {
     a {
@@ -111,10 +114,19 @@
       @include icon-before($fa-var-plus, 1em, 10px);
     }
   }
-  
   .ui-state-highlight-my {
     line-height: 1.5em;
     height: 1.5em;
     background-color: #fafafa;
   }
 }
+
+/** 
+ ** Project Item Popup Menu
+ */
+.project-item-menu {
+  @include popup-menu(50%, 90%);
+  @include box-shadow(rgba(black, 0.4) 0 0 25px, rgba(black, 0.2) 0 0 3px 1px inset);
+  width: 200px;
+}
+

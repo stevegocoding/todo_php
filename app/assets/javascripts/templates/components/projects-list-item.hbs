@@ -4,6 +4,8 @@
   {{icon-button btnType="menuToggleBtn" clickAction="show" listItem=this}}
 
   {{#if isMenuVisible}}
-    {{popup-menu}}
+    {{#project-popup-menu as |entry|}}
+      {{project-menu-entry menuTitle=entry.title menuEntryAction=entry.action targetObject=view}}
+    {{/project-popup-menu}}
   {{/if}}
 </div>
