@@ -296,9 +296,22 @@
   
   /** Horizontal Menu Component
    **/
-  App.HorizontalMenuComponent = Ember.Component.extend({
-    tagName: 'div',
-    classNames: ['horizontal-menu']
+  App.SidebarHorizontalMenuComponent = App.MenuComponent.extend({
+    menuType: 'sidebarHorizontalMenu',
+    classNames: ['horizontal-menu'],
+    init: function() {
+      this._super();
+      this.set('menuEntries', [
+          {
+            title: 'Projects',
+            action: 'showProjects'
+          },
+          {
+            title: 'Filters',
+            action: 'showFilters'
+          }
+      ]);
+    }
   });
   App.HorizontalMenuEntryComponent = Ember.Component.extend({
   });

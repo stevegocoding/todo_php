@@ -4,7 +4,7 @@
 
 @mixin sidebar-list($margin: null null null null) {
   @include margin($margin);
-  margin-left: gutter();
+  //margin-left: gutter();
 } 
 
 @mixin sidebar-list-item($heigh, $margin: null null null null) {
@@ -70,20 +70,23 @@
 
 .sidebar-menu {
   .tabs-menu {
-    @include horizontal-list(false);
+    @include horizontal-list;
     @include clearfix;
     @include separator_line;
   }
   .tabs-menu-item {
     @include span(2 of 4);
     margin: 0;
+    padding-top: 5px;
     padding-bottom: 5px;
     a {
+      padding-left: 27.5%;
       color: #737373;
       text-decoration: none;
     }
     &:hover {
-      border-bottom: 2px solid $red;
+      //border-bottom: 2px solid $red;
+      background-color: #fff;
     }
   }
 }
