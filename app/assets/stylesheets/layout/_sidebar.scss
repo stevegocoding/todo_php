@@ -48,10 +48,12 @@
 
 .sidebar-top-filters {
   @include sidebar-list(20px 0 20px 0);
+  margin-left: gutter();
   
   a {
     color: #737373;
     text-decoration: none;
+    font-weight: 600;
   }
   
   .inbox-filter {
@@ -83,6 +85,7 @@
       padding-left: 27.5%;
       color: #737373;
       text-decoration: none;
+      font-weight: 600;
     }
     &:hover {
       //border-bottom: 2px solid $red;
@@ -112,10 +115,11 @@
     .menu-toggle-btn {
       position: absolute;
       right: 10%;
-      @include icon-before($fa-var-ellipsis-v, 1.5em, 15px);
+      width: 20px;
+      @include icon-before($fa-var-ellipsis-v, 15px);
     }
     .sortable-handle {
-      @include icon-before($fa-var-bars, 1.5em, 15px);
+      @include icon-before($fa-var-bars, 10px, 10px);
     }
   }
   .menu-list-action {
