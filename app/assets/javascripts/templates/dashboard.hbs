@@ -25,10 +25,9 @@
     
     <!-- Sidebar tabs menu -->
     <div class="sidebar-menu">
-      <ul class="tabs-menu">
-        <li class="tabs-menu-item"><a href="#">Projects</a></li>
-        <li class="tabs-menu-item"><a href="#">Labels</a></li>
-      </ul>
+      {{#horizontal-menu as |entry|}}
+        {{horizontal-menu-entry menuTitle=entry.title menuEntryAction=entry.action targetObject=view}}
+      {{/horizontal-menu}}
     </div> <!-- Sidebar tabs menu -->
     
     {{render 'projects'}}

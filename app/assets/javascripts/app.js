@@ -180,6 +180,9 @@
     isSelected: false,
     
     parentList: Ember.computed.alias('parentView'),
+     
+    /** Children Components */
+    //menuTriggerBtn: null,
 
     init: function() {
       this._super();
@@ -187,7 +190,11 @@
     },
     didInsertElement: function() {
       this._hideDragHandle();
+      this._hideMenuTrigger();
     }, 
+    setChildComponent: function(name, component) {
+      this.set(name, component);
+    },
     showMenu: function() {
       this.set('isMenuVisible', true);
     },
@@ -205,9 +212,17 @@
     },
     mouseEnter: function() {
       this._showDragHandle();
+      this._showMenuTrigger();
     },
     mouseLeave: function() {
       this._hideDragHandle();
+      this._hideMenuTrigger();
+    },
+    _showMenuTrigger: function() {
+      this.get('menuTriggerBtn').setVisibility(true);
+    },
+    _hideMenuTrigger: function() {
+      this.get('menuTriggerBtn').setVisibility(false);
     },
     _hideDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'hidden');
@@ -232,11 +247,18 @@
   App.IconButtonComponent = Ember.Component.extend({
     tagName: 'a',
     classNameBindings: ['btnClass'],
-
+    parentItem: Ember.computed.alias('parentView'),
     btnClass: Ember.computed('btnType', function() {
       return Ember.String.dasherize(this.get('btnType'));
     }),
-
+    init: function() {
+      this._super();
+      this.get('parentItem').setChildComponent('menuTriggerBtn', this);
+    },
+    setVisibility: function(isVisible) {
+      val = isVisible? 'visible' : 'hidden';
+      this.$().css('visibility', val);
+    },
     click: function() {
       this.get('listItem').toggleMenu();
     }
@@ -296,9 +318,10 @@
   
   /** Horizontal Menu Component
    **/
-  App.SidebarHorizontalMenuComponent = App.MenuComponent.extend({
+  App.HorizontalMenuComponent = App.MenuComponent.extend({
     menuType: 'sidebarHorizontalMenu',
-    classNames: ['horizontal-menu'],
+    classNames: ['horizontal-menu', 'tabs-menu'],
+    layoutName: 'components/menu',
     init: function() {
       this._super();
       this.set('menuEntries', [
@@ -311,10 +334,17 @@
             action: 'showFilters'
           }
       ]);
-    }
+    },
+    didInsertElement: function() {}
   });
-  App.HorizontalMenuEntryComponent = Ember.Component.extend({
+  Ember.Handlebars.helper('horizontal-menu', App.HorizontalMenuComponent);
+  
+  App.HorizontalMenuEntryComponent = App.MenuEntryComponent.extend({
+    menuEntryType: 'sidebarHorizontalMenuEntry',
+    classNames: ['tabs-menu-item'],
+    layoutName: 'components/menu-entry'
   });
+  Ember.Handlebars.helper('horizontal-menu-entry', App.HorizontalMenuEntryComponent);
   
   
 
