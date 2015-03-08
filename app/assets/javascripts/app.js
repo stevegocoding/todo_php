@@ -243,23 +243,35 @@
   });
   Ember.Handlebars.helper('icon-button', App.IconButtonComponent);
 
-  /** Popup Menu Component 
+  /** Menu Component 
    **/
-  App.PopupMenuComponent = Ember.Component.extend({
+  App.MenuComponent = Ember.Component.extend({
     tagName: 'ul',
     classNameBindings: ['menuClass'],
       
     menuClass: Ember.computed('menuType', function() {
       return this.get('menuType').dasherize();
     }),
-
     didInsertElement: function() {
       this.$().menu();
     }
   });
-  App.ProjectPopupMenuComponent = App.PopupMenuComponent.extend({
+  App.MenuEntryComponent = Ember.Component.extend({
+    tagName: 'li',
+    classNameBindings: ['menuEntryClass'],
+    menuEntryClass: Ember.computed('menuEntryType', function() {
+      return this.get('menuEntryType').dasherize();
+    }),
+    actions: {
+      entryAction: function() {
+        this.sendAction('menuEntryAction');
+      }
+    }
+  });
+  
+  App.ProjectPopupMenuComponent = App.MenuComponent.extend({
     menuType: 'projectItemMenu',
-    layoutName: 'components/popup-menu',
+    layoutName: 'components/menu',
     init: function() {
       this._super();
       this.set('menuEntries', [
@@ -276,23 +288,21 @@
   });
   Ember.Handlebars.helper('project-popup-menu', App.ProjectPopupMenuComponent);
   
-  App.PopupMenuEntryComponent = Ember.Component.extend({
-    tagName: 'li',
-    classNameBindings: ['menuEntryClass'],
-    menuEntryClass: Ember.computed('menuEntryType', function() {
-      return this.get('menuEntryType').dasherize();
-    }),
-    actions: {
-      entryAction: function() {
-        this.sendAction('menuEntryAction');
-      }
-    }
-  });
-  App.ProjectPopupMenuEntryComponent = App.PopupMenuEntryComponent.extend({
+  App.ProjectPopupMenuEntryComponent = App.MenuEntryComponent.extend({
     menuEntryType: 'projectMenuEntry',
-    layoutName: 'components/popup-menu-entry'
+    layoutName: 'components/menu-entry'
   });
   Ember.Handlebars.helper('project-menu-entry', App.ProjectPopupMenuEntryComponent);
+  
+  /** Horizontal Menu Component
+   **/
+  App.HorizontalMenuComponent = Ember.Component.extend({
+    tagName: 'div',
+    classNames: ['horizontal-menu']
+  });
+  App.HorizontalMenuEntryComponent = Ember.Component.extend({
+  });
+  
   
 
 }(window, window.Ember, window.jQuery));
