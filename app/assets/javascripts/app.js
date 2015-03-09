@@ -162,13 +162,13 @@
         handle: '.sortable-handle',
         cursor: 'move',
         update: function(evt, ui) {
+          self.get('listItems').clear();
+          
           var priorities = {};
-
           self.$('.sortable-list-item').each(function(index) {
             var itemID = $(this).attr('data-item-id') ;
             priorities[itemID]= index;
           });
-
           console.log(priorities);
 
           self.$().sortable('cancel');
@@ -224,9 +224,9 @@
 
     init: function() {
       this._super();
-      this.get('parentList').addListItem(this);
     },
     didInsertElement: function() {
+      this.get('parentList').addListItem(this);
       this._hideDragHandle();
       this._hideMenuTrigger();
     }, 
