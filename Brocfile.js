@@ -17,6 +17,7 @@ var env = process.env.BROCCOLI_ENV || 'development';
  * Global
  *******************************************************/
 var bowerTree = 'bower_components';
+var vendorTree = 'vendor/assets/';
 var appAssetsTree = 'app/assets/';
 
 /******************************************************
@@ -60,33 +61,57 @@ appCss = new Funnel(appCss, {
  *******************************************************/
 var appTree = 'app/assets/javascripts';
 var appFiles = ['**/*.js'];
+var bowerFiles = null;
 var vendorFiles = null;
 if (env === 'production') {
-  vendorFiles = [
+  bowerFiles = [
     'jquery/dist/jquery.min.js',
     'jquery-ui/jquery-ui.min.js',
     'ember/ember.min.js',
-    'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.min.js'
   ]; 
+  vendorFiles = [
+    'ember-easyForm.min.js'
+  ]
 }
 else {
-  vendorFiles = [
+  bowerFiles = [
     'jquery/dist/jquery.min.js',
     'jquery-ui/jquery-ui.min.js',
     'ember/ember.debug.js',
-    'ember-model/ember-model.js',
     'handlebars/handlebars.runtime.js'
   ]; 
+  vendorFiles = [
+    'ember-easyForm.min.js'
+  ]
 }
+
+var bowerJSFiles = new Funnel(bowerTree, {
+  files: bowerFiles
+});
+var vendorJSFiles = new Funnel(vendorTree, {
+  srcDir: 'javascripts',
+  files: vendorFiles
+});
 
 var appJS = concatFiles(appTree, {
   inputFiles: appFiles,
   outputFile: '/app_bundle.js'
 });
 
-var vendorJS = concatFiles(bowerTree, {
+var bowerJS = concatFiles(bowerTree, {
+  inputFiles: bowerFiles,
+  outputFile: '/bower.js'
+});
+
+var vendorJS = concatFiles(vendorJSFiles, {
   inputFiles: vendorFiles,
+  outputFile: '/vendor.js'
+});
+
+var bowerVendorMerged = mergeTrees([vendorJS, bowerJS]);
+vendorJS = concatFiles(bowerVendorMerged, {
+  inputFiles: ['*.js'],
   outputFile: '/vendor.js'
 });
 
