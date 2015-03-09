@@ -16,7 +16,7 @@ var env = process.env.BROCCOLI_ENV || 'development';
 /******************************************************
  * Global
  *******************************************************/
-var vendorTree = 'bower_components';
+var bowerTree = 'bower_components';
 var appAssetsTree = 'app/assets/';
 
 /******************************************************
@@ -24,7 +24,7 @@ var appAssetsTree = 'app/assets/';
  *******************************************************/
 var jqueryUIThemeName = 'custom';
 var jqueryUIThemePath = 'jquery-ui/themes/' + jqueryUIThemeName + '/';
-var jqueryUIThemeTree = new Funnel(vendorTree, {
+var jqueryUIThemeTree = new Funnel(bowerTree, {
   srcDir: 'jquery-ui/themes/' + jqueryUIThemeName
 });
 var jqueryUIThemeImageTree = new Funnel(jqueryUIThemeTree, {
@@ -35,7 +35,7 @@ var vendorCssFiles = [
     jqueryUIThemePath + 'jquery-ui.min.css'
 ];
 
-var vendorCss = concatFiles(vendorTree, {
+var vendorCss = concatFiles(bowerTree, {
   inputFiles: vendorCssFiles,
   outputFile: '/vendor.css'
 });
@@ -85,7 +85,7 @@ var appJS = concatFiles(appTree, {
   outputFile: '/app_bundle.js'
 });
 
-var vendorJS = concatFiles(vendorTree, {
+var vendorJS = concatFiles(bowerTree, {
   inputFiles: vendorFiles,
   outputFile: '/vendor.js'
 });
@@ -124,7 +124,7 @@ var jqueryUIImages= new Funnel(jqueryUIThemeImageTree, {
 /******************************************************
  * Fonts
  *******************************************************/
-var vendorFonts = new Funnel(vendorTree, {
+var vendorFonts = new Funnel(bowerTree, {
   srcDir: 'font-awesome/fonts',
   destDir: 'fonts'
 });
