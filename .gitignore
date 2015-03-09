@@ -2,7 +2,8 @@
 .DS_Store
 tmp/
 public/assets/
-vendor/
 node_modules/
 bower_components/
 tools/
+vendor/*
+!vendor/assets/

@@ -215,6 +215,7 @@
     attributeBindings: ['pid:data-item-id'],
     isMenuVisible: false, 
     isSelected: false,
+    editorMode: false,
     
     targetObject: Ember.computed.alias('parentView'),
     parentList: Ember.computed.alias('parentView'),
