@@ -1,11 +1,8 @@
 <div class="item-wrapper">
   <span class="sortable-handle"></span>
   <span class="sortable-list-item-content"> {{desc}} </span>
-  {{icon-button btnType="menuToggleBtn" clickAction="show" listItem=this}}
-
+  {{icon-button btnType="menuToggleBtn" btnAction="menuTriggeredAction"}}
   {{#if isMenuVisible}}
-    {{#project-popup-menu as |entry|}}
-      {{project-menu-entry menuTitle=entry.title menuEntryAction=entry.action targetObject=view}}
-    {{/project-popup-menu}}
+    {{project-popup-menu}}
   {{/if}}
 </div>

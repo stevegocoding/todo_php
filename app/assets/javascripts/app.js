@@ -68,7 +68,6 @@
     sortedProjects: Ember.computed.alias('arrangedContent', function() {
       console.log('test');
     }),
-
     actions: {
       updatePriorities: function(priorities) {
         var i = 0;
@@ -87,21 +86,33 @@
         console.log('---------------------');
         Ember.endPropertyChanges();
       }, 
+      showProjectPopupMenu: function() {
+        console.log('show menu');
+        this._showProjectPopupMenu();
+      },
       newProjectAbove: function() {
         console.log('new project above');
       },
       newProjectBelow: function() {
         console.log('new project below');
       }
+    },
+    _closeProjectPopupMenu: function() {
+      this.set('isProjectMenuShown', false);
+    },
+    _showProjectPopupMenu: function() {
+      this.set('isProjectMenuShown', true);
     }
-    
   });
   
   /***************************************
    * Dashboard View 
    **************************************/
   App.DashboardView = Ember.View.extend({
-    templateName: 'dashboard'
+    templateName: 'dashboard',
+    click: function() {
+      console.log('dashboard view -- click');
+    }
   });
   
   /***************************************
@@ -144,7 +155,6 @@
         }
       });
     },
-
     _initJQueryUISortableList: function() {
       var self = this;
       var options = {
@@ -170,19 +180,47 @@
       this.$().disableSelection();
     }
   });
+  App.ProjectsListComponent = App.SortableListComponent.extend({
+    listType: 'projectsList',
+    layoutName: 'components/sortable-list',
+    didOpenPopupMenu: false,
+    click: function() {
+      if (!this.get('didOpenPopupMenu')) {
+        this._closeAllPopupMenus();
+      }
+      else {
+        this.set('didOpenPopupMenu', false);
+      }
+    },
+    actions: {
+      showProjectPopupMenu: function(item) {
+        this._closeAllPopupMenus();
+        item.set('isMenuVisible', true);
+        this.set('didOpenPopupMenu', true);
+        return false;
+      }
+    },
+    _closeAllPopupMenus: function() {
+      this.get('listItems').forEach(function(item, index, enumerable) {
+        item.set('isMenuVisible', false);
+      });
+    }
+  });
+  Ember.Handlebars.helper('projects-list', App.ProjectsListComponent);
 
   App.ProjectsListItemComponent = Ember.Component.extend({
     tagName: 'li',
     classNames: ['ui-sortable-handle', 'sortable-list-item', 'projects-list-item'],
     classNameBindings: ['isSelected'],
     attributeBindings: ['pid:data-item-id'],
-    isMenuVisible: false,
+    isMenuVisible: false, 
     isSelected: false,
     
+    targetObject: Ember.computed.alias('parentView'),
     parentList: Ember.computed.alias('parentView'),
      
     /** Children Components */
-    //menuTriggerBtn: null,
+    menuTriggerBtn: null,
 
     init: function() {
       this._super();
@@ -195,17 +233,9 @@
     setChildComponent: function(name, component) {
       this.set(name, component);
     },
-    showMenu: function() {
-      this.set('isMenuVisible', true);
-    },
-    hideMenu: function() {
-      this.set('isMenuVisible', false);
-    },
     toggleMenu: function() {
-      var cur = this.get('isMenuVisible');
-      this.set('isMenuVisible', !cur);
+      this.set('isMenuVisible', !this.get('isMenuVisible'));
     },
-
     click: function() {
       this.get('parentList').clearSelection();
       this.set('isSelected', true);
@@ -217,6 +247,11 @@
     mouseLeave: function() {
       this._hideDragHandle();
       this._hideMenuTrigger();
+    },
+    actions: {
+      menuTriggeredAction: function() {
+        this.sendAction('menuTriggeredAction', this);
+      }
     },
     _showMenuTrigger: function() {
       this.get('menuTriggerBtn').setVisibility(true);
@@ -230,18 +265,6 @@
     _showDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'visible');
     }
-    /*
-    ,
-    actions: {
-      newProjectAbove: function() {
-        this.sendAction();
-      },
-      newProjectBelow: function() {
-        this.sendAction();
-      }
-    }
-    */
-    
   });
 
   App.IconButtonComponent = Ember.Component.extend({
@@ -260,7 +283,7 @@
       this.$().css('visibility', val);
     },
     click: function() {
-      this.get('listItem').toggleMenu();
+      this.sendAction('btnAction');
     }
   });
   Ember.Handlebars.helper('icon-button', App.IconButtonComponent);
@@ -275,7 +298,6 @@
       return this.get('menuType').dasherize();
     }),
     didInsertElement: function() {
-      this.$().menu();
     }
   });
   App.MenuEntryComponent = Ember.Component.extend({
@@ -334,8 +356,7 @@
             action: 'showFilters'
           }
       ]);
-    },
-    didInsertElement: function() {}
+    }
   });
   Ember.Handlebars.helper('horizontal-menu', App.HorizontalMenuComponent);
   
