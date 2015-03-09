@@ -302,7 +302,7 @@
   });
   App.MenuEntryComponent = Ember.Component.extend({
     tagName: 'li',
-    classNameBindings: ['menuEntryClass'],
+    classNameBindings: ['menuEntryClass', 'withSeparator'],
     menuEntryClass: Ember.computed('menuEntryType', function() {
       return this.get('menuEntryType').dasherize();
     }),
@@ -321,11 +321,19 @@
       this.set('menuEntries', [
           {
             title: 'Add project above',
-            action: 'newProjectAbove'
+            action: 'newProjectAbove',
+            options: {}
           },
           {
             title: 'Add project below',
-            action: 'newProjectBelow'
+            action: 'newProjectBelow',
+            options: {
+              separator: true
+            }
+          },
+          {
+            title: 'Edit project',
+            action: 'editProject'
           }
       ]);
     }
@@ -334,7 +342,14 @@
   
   App.ProjectPopupMenuEntryComponent = App.MenuEntryComponent.extend({
     menuEntryType: 'projectMenuEntry',
-    layoutName: 'components/menu-entry'
+    layoutName: 'components/menu-entry',
+    withSeparator: Ember.computed('options', function() {
+      var opt = this.get('options');
+      if (opt && opt.hasOwnProperty('separator') && opt['separator'] === true) {
+        return 'with-separator';
+      }
+      return '';
+    })
   });
   Ember.Handlebars.helper('project-menu-entry', App.ProjectPopupMenuEntryComponent);
   
