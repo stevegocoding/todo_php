@@ -124,9 +124,8 @@ var jqueryUIImages= new Funnel(jqueryUIThemeImageTree, {
 /******************************************************
  * Fonts
  *******************************************************/
-var vendorFontsTree = 'vendor/assets/fonts';
-var vendorFonts = new Funnel(vendorFontsTree, {
-  srcDir: 'font-awesome',
+var vendorFonts = new Funnel(vendorTree, {
+  srcDir: 'font-awesome/fonts',
   destDir: 'fonts'
 });
 

@@ -1,8 +1,12 @@
 <div class="item-wrapper">
-  <span class="sortable-handle"></span>
-  <span class="sortable-list-item-content"> {{desc}} </span>
-  {{icon-button btnType="menuToggleBtn" btnAction="menuTriggeredAction"}}
-  {{#if isMenuVisible}}
-    {{project-popup-menu}}
+  {{#if editorMode}}
+    <p> editor mode </p>
+  {{else}}
+    <span class="sortable-handle"></span>
+    <span class="sortable-list-item-content"> {{desc}} </span>
+    {{icon-button btnType="menuToggleBtn" btnAction="menuTriggeredAction"}}
+    {{#if isMenuVisible}}
+      {{project-popup-menu}}
+    {{/if}}
   {{/if}}
 </div>
