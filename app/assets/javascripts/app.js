@@ -95,6 +95,9 @@
       },
       newProjectBelow: function() {
         console.log('new project below');
+      },
+      editProject: function() {
+        
       }
     },
     _closeProjectPopupMenu: function() {
@@ -198,6 +201,9 @@
         item.set('isMenuVisible', true);
         this.set('didOpenPopupMenu', true);
         return false;
+      },
+      editProjectMenuAction: function(item) {
+        this._closeAllPopupMenus();
       }
     },
     _closeAllPopupMenus: function() {
@@ -219,7 +225,13 @@
     
     targetObject: Ember.computed.alias('parentView'),
     parentList: Ember.computed.alias('parentView'),
-     
+    
+    modeDidChange: function() {
+      if (this.get('editorMode')) {
+        this._hideMenuTrigger();
+      }
+    }.observes('editorMode'),
+    
     /** Children Components */
     menuTriggerBtn: null,
 
@@ -228,8 +240,10 @@
     },
     didInsertElement: function() {
       this.get('parentList').addListItem(this);
-      this._hideDragHandle();
-      this._hideMenuTrigger();
+      if (!this.get('editorMode')) {
+        this._hideDragHandle();
+        this._hideMenuTrigger();
+      }
     }, 
     setChildComponent: function(name, component) {
       this.set(name, component);
@@ -242,16 +256,24 @@
       this.set('isSelected', true);
     },
     mouseEnter: function() {
-      this._showDragHandle();
-      this._showMenuTrigger();
+      if (!this.get('editorMode')) {
+        this._showDragHandle();
+        this._showMenuTrigger();
+      }
     },
     mouseLeave: function() {
-      this._hideDragHandle();
-      this._hideMenuTrigger();
+      if (!this.get('editorMode')) {
+        this._hideDragHandle();
+        this._hideMenuTrigger();
+      }
     },
     actions: {
       menuTriggeredAction: function() {
         this.sendAction('menuTriggeredAction', this);
+      },
+      editProject: function() {
+        this.sendAction('editProjectMenuAction', this);
+        this.set('editorMode', true);
       }
     },
     _showMenuTrigger: function() {
@@ -288,13 +310,20 @@
     }
   });
   Ember.Handlebars.helper('icon-button', App.IconButtonComponent);
+  
+  /** Input text filed component for project item
+   **/
+  App.ProjectItemTextAreaComponent = Ember.TextArea.extend({
+    classNames: ['project-desc-input'],
+    
+  });
+  Ember.Handlebars.helper('project-textarea', App.ProjectItemTextAreaComponent);
 
   /** Menu Component 
    **/
   App.MenuComponent = Ember.Component.extend({
     tagName: 'ul',
     classNameBindings: ['menuClass'],
-      
     menuClass: Ember.computed('menuType', function() {
       return this.get('menuType').dasherize();
     }),
@@ -382,7 +411,6 @@
     layoutName: 'components/menu-entry'
   });
   Ember.Handlebars.helper('horizontal-menu-entry', App.HorizontalMenuEntryComponent);
-  
   
 
 }(window, window.Ember, window.jQuery));

@@ -71,7 +71,7 @@ if (env === 'production') {
     'handlebars/handlebars.runtime.min.js'
   ]; 
   vendorFiles = [
-    'ember-easyForm.min.js'
+    //'ember-easyForm.min.js'
   ]
 }
 else {
@@ -82,7 +82,7 @@ else {
     'handlebars/handlebars.runtime.js'
   ]; 
   vendorFiles = [
-    'ember-easyForm.min.js'
+    //'ember-easyForm.min.js'
   ]
 }
 

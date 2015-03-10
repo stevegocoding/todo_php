@@ -1,5 +1,5 @@
 <div class="sidebar-projects-list">
   {{#projects-list items=controller.sortedProjects sortedListAction="updatePriorities" as |project| }}
-    {{projects-list-item pid=project.id desc=project.desc menuTriggeredAction="showProjectPopupMenu"}}
+    {{projects-list-item project=project pid=project.id desc=project.desc menuTriggeredAction="showProjectPopupMenu"}}
   {{/projects-list}}
 </div>

@@ -102,8 +102,19 @@
     @include sidebar-list(20px 0 20px 0);
   }
   .projects-list-item {
+    .desc-cell {
+      width: 100%;
+    }
     .sortable-list-item-content {
       color: black;
+    }
+    .editor-wrapper {
+      display: inline-block;
+      .project-desc-input {
+        width: 100%;
+        height: 30px;
+        resize: none;
+      }
     }
     &.is-selected {
       .sortable-list-item-content {
@@ -114,10 +125,8 @@
     position: relative;
     @include sidebar-list-item(20px, 10px 0 10px gutter(2));
     .menu-toggle-btn {
-      position: absolute;
+      //position: absolute;
       right: 10%;
-      width: 20px;
-      height: 20px;
       padding-left: 10px;
       @include icon-before($fa-var-ellipsis-v, 15px, 10px);
       &:hover {
@@ -151,6 +160,7 @@
   @include border-radius(5px);
   background-color: white;
   width: 200px;
+  margin-left: 20px;
   
   .project-menu-entry {
     padding-top: 10px;
