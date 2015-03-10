@@ -136,6 +136,9 @@
     .sortable-handle {
       @include icon-before($fa-var-bars, 10px, 10px);
     }
+    .btn-project-save {
+      @include button-variant(white, red, red);
+    }
   }
   .menu-list-action {
     a {

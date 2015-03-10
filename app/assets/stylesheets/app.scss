@@ -10,8 +10,11 @@
 @import "helpers/utils";
 
 // Vendors
+@import "../../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+@import "../../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-compass";
 @import "../../../bower_components/font-awesome/scss/font-awesome";
 
+@import "vendor/bootstrap_customize";
 @import "layout/layout";
 @import "layout/sidebar";
 @import "layout/main";

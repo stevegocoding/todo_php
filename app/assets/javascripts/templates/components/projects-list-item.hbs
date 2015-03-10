@@ -6,6 +6,8 @@
     <td class="desc-cell">
       {{#if editorMode}}
         <span class="editor-wrapper">{{project-textarea value=desc cols="40" rows="6"}} </span>
+        <button type="button" class="btn btn-project-save">Save</button>
+        <button type="button" class="btn btn-link">Cacel</button>
       {{else}}
         <span class="sortable-list-item-content"> {{desc}} </span>
       {{/if}}
