@@ -16,9 +16,17 @@
    * Models
    **************************************/
   App.Project = Ember.Object.extend({
-    id: 0,
+    id: -1,
     desc: '',
-    priority: 0
+    priority: -1,
+    
+    isNew: Ember.computed('desc', function() {
+      return this.get('desc').length === 0;
+    }),
+    
+    init: function() {
+      
+    }
   });
   
   App.Project.reopenClass({
@@ -65,9 +73,8 @@
   
   App.ProjectsController = Ember.ArrayController.extend({
     sortProperties: ['priority'],
-    sortedProjects: Ember.computed.alias('arrangedContent', function() {
-      console.log('test');
-    }),
+    sortAscending: true,
+    sortedProjects: Ember.computed.alias('arrangedContent'),
     actions: {
       updatePriorities: function(priorities) {
         var i = 0;
@@ -90,6 +97,15 @@
         console.log('show menu');
         this._showProjectPopupMenu();
       },
+      newProject: function() {
+        var data = {
+          id: this.get('length').toString(),
+          desc: '',
+          priority: this.get('length').toString()
+        };
+        var newProj = App.Project.create(data);
+        this.pushObject(newProj);
+      },
       newProjectAbove: function() {
         console.log('new project above');
       },
@@ -97,7 +113,6 @@
         console.log('new project below');
       },
       editProject: function() {
-        
       }
     },
     _closeProjectPopupMenu: function() {
