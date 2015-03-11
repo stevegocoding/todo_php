@@ -19,14 +19,7 @@
     id: -1,
     desc: '',
     priority: -1,
-    
-    isNew: Ember.computed('desc', function() {
-      return this.get('desc').length === 0;
-    }),
-    
-    init: function() {
-      
-    }
+    isNew: false
   });
   
   App.Project.reopenClass({
@@ -75,8 +68,11 @@
     sortProperties: ['priority'],
     sortAscending: true,
     sortedProjects: Ember.computed.alias('arrangedContent'),
+    nextID: Ember.computed(function() {
+      return (this.get('length')+1).toString();
+    }),
     actions: {
-      updatePriorities: function(priorities) {
+      updateProjectsPriorities: function(priorities) {
         var i = 0;
         console.log('---------------------');
         Ember.beginPropertyChanges();
@@ -93,33 +89,25 @@
         console.log('---------------------');
         Ember.endPropertyChanges();
       }, 
-      showProjectPopupMenu: function() {
-        console.log('show menu');
-        this._showProjectPopupMenu();
-      },
       newProject: function() {
         var data = {
-          id: this.get('length').toString(),
+          id: this.get('nextID'),
           desc: '',
-          priority: this.get('length').toString()
+          priority: this.get('length').toString(),
+          isNew: true
         };
         var newProj = App.Project.create(data);
         this.pushObject(newProj);
       },
-      newProjectAbove: function() {
-        console.log('new project above');
+      createProject: function(data) {
+        console.log('create');
       },
-      newProjectBelow: function() {
-        console.log('new project below');
+      deleteProject: function(data) {
+        console.log('delete');
       },
-      editProject: function() {
+      updateProject: function(data) {
+        console.log('update');
       }
-    },
-    _closeProjectPopupMenu: function() {
-      this.set('isProjectMenuShown', false);
-    },
-    _showProjectPopupMenu: function() {
-      this.set('isProjectMenuShown', true);
     }
   });
   
@@ -127,10 +115,7 @@
    * Dashboard View 
    **************************************/
   App.DashboardView = Ember.View.extend({
-    templateName: 'dashboard',
-    click: function() {
-      console.log('dashboard view -- click');
-    }
+    templateName: 'dashboard'
   });
   
   /***************************************
@@ -138,34 +123,53 @@
    **************************************/
 
   /** 
-   * Sortable List Component
+   * jQuery UI Sortable Mixin
    **/
-  App.SortableListComponent = Ember.Component.extend({
+  App.JQueryUISortableMixin = Ember.Mixin.create({
+    didInsertElement: function() {
+      var self = this;
+      var options = {
+        placeholder: self.get('placeholderClass'),
+        handle: self.get('sortableHandleQueryStr'),
+        cursor: 'move',
+        update: function(evt, ui) {
+          var indices = {};
+          self.$().find(self.get('sortableItemQueryStr')).each(function(index) {
+            var itemID = $(this).attr(self.get('sortableItemIDAttr'));
+            indices[itemID]= index;
+          });
+          self.$().sortable('cancel');
+          self.didUpdateSortable(indices);
+        }
+      };
+      this.$().sortable(options);
+      this.$().disableSelection();
+    }
+  });
+  App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
     tagName: 'ul',
-    classNameBindings: ['listClass'],
+    classNames: ['projects-list'],
     listItems: Ember.A([]),
-    
-    listClass: Ember.computed('listType', function() {
-      return (this.get('listType').dasherize());
-    }),
+    didOpenPopupMenu: false,
 
-    itemsDidChanged: function() {
-      console.log('items array changed! ' + this.get('items').get('length'));
-    }.observes('items').on('init'),
-
-    init: function() {
+    /** Sortable Mixin Config */
+    placeholderClass: 'ui-state-highlight-my',
+    sortableHandleQueryStr: '.sortable-handle',
+    sortableItemQueryStr: '.sortable-list-item',
+    sortableItemIDAttr: 'data-item-id',
+   
+    didInsertElement: function() {
+      this.set('sortbleItemIDAttr', 'data-item-id');
       this._super();
     },
-
-    didInsertElement: function() {
-      this._initJQueryUISortableList();
-      console.log('insert element');
+    didUpdateSortable: function(indices) {
+      this.get('listItems').clear();
+      this.rerender();
+      this.sendAction('updateSortable', indices);
     },
-    
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
     },
-    
     clearSelection: function() {
       this.get('listItems').forEach(function(item, index, enumerable) {
         if (item.get('isSelected') === true) {
@@ -173,61 +177,50 @@
         }
       });
     },
-    _initJQueryUISortableList: function() {
-      var self = this;
-      var options = {
-        placeholder: 'ui-state-highlight-my',
-        handle: '.sortable-handle',
-        cursor: 'move',
-        update: function(evt, ui) {
-          self.get('listItems').clear();
-          
-          var priorities = {};
-          self.$('.sortable-list-item').each(function(index) {
-            var itemID = $(this).attr('data-item-id') ;
-            priorities[itemID]= index;
-          });
-          console.log(priorities);
-
-          self.$().sortable('cancel');
-          self.rerender();
-          self.sendAction('sortedListAction', priorities);
-        }
-      };
-      this.$().sortable(options);
-      this.$().disableSelection();
-    }
-  });
-  App.ProjectsListComponent = App.SortableListComponent.extend({
-    listType: 'projectsList',
-    layoutName: 'components/sortable-list',
-    didOpenPopupMenu: false,
+    closeAllPopupMenus: function() {
+      this.get('listItems').forEach(function(item, index, enumerable) {
+        item.set('isMenuVisible', false);
+      });
+    },
     click: function() {
       if (!this.get('didOpenPopupMenu')) {
-        this._closeAllPopupMenus();
+        this.closeAllPopupMenus();
       }
       else {
         this.set('didOpenPopupMenu', false);
       }
     },
-    actions: {
-      showProjectPopupMenu: function(item) {
-        this._closeAllPopupMenus();
-        item.set('isMenuVisible', true);
-        this.set('didOpenPopupMenu', true);
-        return false;
-      },
-      editProjectMenuAction: function(item) {
-        this._closeAllPopupMenus();
+    openProjectPopupMenu: function(item) {
+      this.closeAllPopupMenus();
+      item.set('isMenuVisible', true);
+      this.set('didOpenPopupMenu', true);
+    },
+    saveEdit: function(item) {
+      if (item.get('isNew')) {
+        var params = {
+          id: item.get('pid'),
+          desc: item.get('desc'),
+          priority: item.get('priority')
+        };
+        this.sendAction('addProject', params);
+      }
+      else {
+        var params = {
+          desc: item.get('desc'),
+        };
+        this.sendAction('updateProject', params);
       }
     },
-    _closeAllPopupMenus: function() {
-      this.get('listItems').forEach(function(item, index, enumerable) {
-        item.set('isMenuVisible', false);
-      });
+    cancelEdit: function(item) {
+      if (item.get('isNew')) {
+        var params = {
+          id: item.get('pid'),
+          isNew: item.get('isNew')
+        };
+        this.sendAction('removeProject', params);
+      }
     }
   });
-  Ember.Handlebars.helper('projects-list', App.ProjectsListComponent);
 
   App.ProjectsListItemComponent = Ember.Component.extend({
     tagName: 'li',
@@ -238,13 +231,11 @@
     isSelected: false,
     editorMode: false,
     
-    targetObject: Ember.computed.alias('parentView'),
-    parentList: Ember.computed.alias('parentView'),
-    
     modeDidChange: function() {
       if (this.get('editorMode')) {
         this._hideMenuTrigger();
       }
+      console.log('editor mode!');
     }.observes('editorMode'),
     
     /** Children Components */
@@ -252,9 +243,13 @@
 
     init: function() {
       this._super();
+      if (this.get('isNew')) {
+        this.set('editorMode', true);
+      }
     },
     didInsertElement: function() {
-      this.get('parentList').addListItem(this);
+      console.log('test');
+      this.get('projectsList').addListItem(this);
       if (!this.get('editorMode')) {
         this._hideDragHandle();
         this._hideMenuTrigger();
@@ -267,8 +262,8 @@
       this.set('isMenuVisible', !this.get('isMenuVisible'));
     },
     click: function() {
-      this.get('parentList').clearSelection();
-      this.set('isSelected', true);
+      //this.get('parentList').clearSelection();
+      //this.set('isSelected', true);
     },
     mouseEnter: function() {
       if (!this.get('editorMode')) {
@@ -282,15 +277,6 @@
         this._hideMenuTrigger();
       }
     },
-    actions: {
-      menuTriggeredAction: function() {
-        this.sendAction('menuTriggeredAction', this);
-      },
-      editProject: function() {
-        this.sendAction('editProjectMenuAction', this);
-        this.set('editorMode', true);
-      }
-    },
     _showMenuTrigger: function() {
       this.get('menuTriggerBtn').setVisibility(true);
     },
@@ -302,6 +288,27 @@
     },
     _showDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'visible');
+    },
+    actions: {
+      openMenuBtnAction: function() {
+        this.get('projectsList').openProjectPopupMenu(this);
+      },
+      editProjectMenuAction: function() {
+        this.set('editorMode', true);
+        this.set('isMenuVisible', false);
+      },
+      newProjectAboveMenuAction: function() {
+        console.log('new project above -- item');
+      },
+      newProjectBelowMenuAction: function() {
+        console.log('new project below -- item');
+      },
+      saveEditBtnAction: function() {
+        this.get('projectsList').saveEdit(this);
+      },
+      cancelEditBtnAction: function() {
+        this.get('projectsList').cancelEdit(this);
+      }
     }
   });
 
@@ -330,7 +337,7 @@
    **/
   App.ProjectItemTextAreaComponent = Ember.TextArea.extend({
     classNames: ['project-desc-input'],
-    
+    placeholder: 'Project name'
   });
   Ember.Handlebars.helper('project-textarea', App.ProjectItemTextAreaComponent);
 
@@ -366,19 +373,19 @@
       this.set('menuEntries', [
           {
             title: 'Add project above',
-            action: 'newProjectAbove',
+            action: 'newProjectAboveMenuAction',
             options: {}
           },
           {
             title: 'Add project below',
-            action: 'newProjectBelow',
+            action: 'newProjectBelowMenuAction',
             options: {
               separator: true
             }
           },
           {
             title: 'Edit project',
-            action: 'editProject'
+            action: 'editProjectMenuAction'
           }
       ]);
     }
