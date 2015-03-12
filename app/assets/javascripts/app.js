@@ -19,10 +19,7 @@
     id: -1,
     desc: '',
     priority: -1,
-    isNew: false,
-    init: function() {
-      this._super();
-    }
+    isNew: false
   });
   
   App.Project.reopenClass({
@@ -80,7 +77,7 @@
     sortAscending: true,
     sortedProjects: Ember.computed.alias('arrangedContent'),
     nextID: Ember.computed(function() {
-      return (this.get('length')+1).toString();
+      return (parseInt(this.get('lastObject').get('id')) + 1).toString();
     }),
     actions: {
       updateProjectsPriorities: function(priorities) {
@@ -123,8 +120,14 @@
           params.deferred.reject(error);
         });
       },
-      deleteProject: function(data) {
+      deleteProject: function(params) {
         console.log('delete');
+        if (params.isNew === true) {
+          var obj = this.findBy('id', params.id) 
+          if (obj.get('isNew') === true) {
+            this.removeObject(obj);
+          }
+        }
       },
       updateProject: function(data) {
         console.log('update');
@@ -219,6 +222,7 @@
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
           console.log('deferred OK');
+          item.set('editorMode', false);
           self.rerender();
         },
         function(reason) {
