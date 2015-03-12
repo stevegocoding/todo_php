@@ -36,8 +36,15 @@ class ProjectsController extends \App\Controller\AppController
   public function create() {
     $body = $this->request->getBody();
     $req = json_decode($body);
+
+    $dbCon = DBConFactory::createConnection();
+    $dbCon->getHandle();
+    $stmt = $dbCon->getHandle()->prepare("INSERT INTO projects (project_desc, project_priority, user_id) VALUES (:desc, :priority, :userID)");
+    $stmt->execute(array(':desc' => $req->desc, ':priority' => $req->priority, ':userID' => 1));
+    $lastID = $dbCon->getHandle()->lastInsertId();
+
     $resp = array(
-      'id' => $req->id,
+      'id' => $lastID,
       'desc' => $req->desc,
       'priority' => $req->priority
     );

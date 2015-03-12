@@ -215,9 +215,11 @@
     },
     saveEdit: function(item) {
       if (item.get('isNew')) {
+        var self = this;
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
           console.log('deferred OK');
+          self.rerender();
         },
         function(reason) {
           console.log('deferred Failed! -- ' + reason);
