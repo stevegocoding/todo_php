@@ -32,4 +32,16 @@ class ProjectsController extends \App\Controller\AppController
     $this->response->header('Content-Type', 'application/json');
     echo json_encode($projects);
   }
+
+  public function create() {
+    $body = $this->request->getBody();
+    $req = json_decode($body);
+    $resp = array(
+      'id' => $req->id,
+      'desc' => $req->desc,
+      'priority' => $req->priority
+    );
+    $this->response->header('Content-Type', 'application/json');
+    echo json_encode($resp);
+  }
 }

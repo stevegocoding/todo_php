@@ -19,7 +19,10 @@
     id: -1,
     desc: '',
     priority: -1,
-    isNew: false
+    isNew: false,
+    init: function() {
+      this._super();
+    }
   });
   
   App.Project.reopenClass({
@@ -35,10 +38,18 @@
         });
       });
     },
-
+    saveNew: function(newProject) {
+      return $.ajax({
+        url: '/projects',
+        type: 'POST',
+        dataType: 'JSON',
+        data: JSON.stringify(newProject)
+      }).then(function(data) {
+        console.log('Project Model: saveNew -- OK!');
+      });
+    },
     find: function(id) {
     },
-
     remove: function(id) {
     }
   });
@@ -99,8 +110,18 @@
         var newProj = App.Project.create(data);
         this.pushObject(newProj);
       },
-      createProject: function(data) {
-        console.log('create');
+      createProject: function(params) {
+        var data = {
+          id: params.id,
+          desc: params.desc,
+          priority: params.priority
+        };
+        App.Project.saveNew(data).then(function(respData) {
+          params.deferred.resolve(respData);
+        },
+        function(error) {
+          params.deferred.reject(error);
+        });
       },
       deleteProject: function(data) {
         console.log('delete');
@@ -144,10 +165,7 @@
       };
       this.$().sortable(options);
       this.$().disableSelection();
-    }
-  });
-  App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
-    tagName: 'ul',
+    } }); App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, { tagName: 'ul',
     classNames: ['projects-list'],
     listItems: Ember.A([]),
     didOpenPopupMenu: false,
@@ -197,10 +215,18 @@
     },
     saveEdit: function(item) {
       if (item.get('isNew')) {
+        var deferred = Ember.RSVP.defer();
+        deferred.promise.then(function(data) {
+          console.log('deferred OK');
+        },
+        function(reason) {
+          console.log('deferred Failed! -- ' + reason);
+        });
         var params = {
           id: item.get('pid'),
           desc: item.get('desc'),
-          priority: item.get('priority')
+          priority: item.get('priority'),
+          deferred: deferred
         };
         this.sendAction('addProject', params);
       }
@@ -358,10 +384,8 @@
     menuEntryClass: Ember.computed('menuEntryType', function() {
       return this.get('menuEntryType').dasherize();
     }),
-    actions: {
-      entryAction: function() {
-        this.sendAction('menuEntryAction');
-      }
+    click: function() {
+      this.sendAction('menuEntryAction');
     }
   });
   
