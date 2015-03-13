@@ -117,7 +117,6 @@
         var self = this;
         App.Project.saveNew(data).then(function(respData, statusCode) {
           Ember.run(function () {
-            console.log(statusCode);
             var obj = self.findBy('id', params.id);
             self.removeObject(obj); 
             var newProj = App.Project.create(respData);
@@ -204,6 +203,11 @@
     },
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
+      console.log('add ----- ');
+    },
+    removeListItem: function(item) {
+      this.get('listItems').removeObject(item);
+      console.log('remove ----- ');
     },
     clearSelection: function() {
       this.get('listItems').forEach(function(item, index, enumerable) {
@@ -218,14 +222,12 @@
       });
     },
     click: function() {
-      /*
       if (!this.get('didOpenPopupMenu')) {
         this.closeAllPopupMenus();
       }
       else {
         this.set('didOpenPopupMenu', false);
       }
-      */
     },
     openProjectPopupMenu: function(item) {
       this.closeAllPopupMenus();
@@ -238,7 +240,8 @@
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
           console.log('deferred OK');
-          // self.rerender();
+          //self.rerender();
+          //self.clearListItems();
         },
         function(reason) {
           console.log('deferred Failed! -- ' + reason);
@@ -295,13 +298,17 @@
       }
     },
     didInsertElement: function() {
-      console.log('test');
+      console.log('insert element');
       this.get('projectsList').addListItem(this);
       if (!this.get('editorMode')) {
         this._hideDragHandle();
         this._hideMenuTrigger();
       }
-    }, 
+    },
+    willDestroyElement: function() {
+      console.log('destroy element');
+      this.get('projectsList').removeListItem(this);
+    },
     setChildComponent: function(name, component) {
       this.set(name, component);
     },
@@ -325,10 +332,10 @@
       }
     },
     _showMenuTrigger: function() {
-      //this.get('menuTriggerBtn').setVisibility(true);
+      this.get('menuTriggerBtn').setVisibility(true);
     },
     _hideMenuTrigger: function() {
-      //this.get('menuTriggerBtn').setVisibility(false);
+      this.get('menuTriggerBtn').setVisibility(false);
     },
     _hideDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'hidden');
@@ -362,13 +369,12 @@
   App.IconButtonComponent = Ember.Component.extend({
     tagName: 'a',
     classNameBindings: ['btnClass'],
-    parentItem: Ember.computed.alias('parentView'),
     btnClass: Ember.computed('btnType', function() {
       return Ember.String.dasherize(this.get('btnType'));
     }),
     init: function() {
       this._super();
-      // this.get('parentItem').setChildComponent('menuTriggerBtn', this);
+      this.get('parentItem').setChildComponent('menuTriggerBtn', this);
     },
     setVisibility: function(isVisible) {
       val = isVisible? 'visible' : 'hidden';
