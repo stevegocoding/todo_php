@@ -160,6 +160,7 @@
    **/
   App.JQueryUISortableMixin = Ember.Mixin.create({
     didInsertElement: function() {
+      Ember.run.scheduleOnce('afterRender', this, function() {
       var self = this;
       var options = {
         placeholder: self.get('placeholderClass'),
@@ -177,7 +178,9 @@
       };
       this.$().sortable(options);
       this.$().disableSelection();
-    } }); 
+      });
+    } 
+  }); 
   
   App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, { tagName: 'ul',
     classNames: ['projects-list'],
