@@ -30,7 +30,7 @@ class ProjectsController extends \App\Controller\AppController
     }
     
     $this->response->header('Content-Type', 'application/json');
-    echo json_encode($projects);
+    echo json_encode($projects, JSON_NUMERIC_CHECK);
   }
 
   public function create() {
@@ -49,6 +49,6 @@ class ProjectsController extends \App\Controller\AppController
       'priority' => $req->priority
     );
     $this->response->header('Content-Type', 'application/json');
-    echo json_encode($resp);
+    echo json_encode($resp, JSON_NUMERIC_CHECK);
   }
 }

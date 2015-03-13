@@ -41,8 +41,6 @@
         type: 'POST',
         dataType: 'JSON',
         data: JSON.stringify(newProject)
-      }).then(function(data) {
-        console.log('Project Model: saveNew -- OK!');
       });
     },
     find: function(id) {
@@ -77,6 +75,9 @@
     sortAscending: true,
     sortedProjects: Ember.computed.alias('arrangedContent'),
     nextID: Ember.computed(function() {
+      if (this.get('length') === 0) {
+        return 1;
+      }
       return (parseInt(this.get('lastObject').get('id')) + 1).toString();
     }),
     actions: {
@@ -101,7 +102,7 @@
         var data = {
           id: this.get('nextID'),
           desc: '',
-          priority: this.get('length').toString(),
+          priority: this.get('length'),
           isNew: true
         };
         var newProj = App.Project.create(data);
@@ -113,8 +114,16 @@
           desc: params.desc,
           priority: params.priority
         };
-        App.Project.saveNew(data).then(function(respData) {
-          params.deferred.resolve(respData);
+        var self = this;
+        App.Project.saveNew(data).then(function(respData, statusCode) {
+          Ember.run(function () {
+            console.log(statusCode);
+            var obj = self.findBy('id', params.id);
+            self.removeObject(obj); 
+            var newProj = App.Project.create(respData);
+            self.pushObject(newProj);
+            params.deferred.resolve(respData);
+          });
         },
         function(error) {
           params.deferred.reject(error);
@@ -168,7 +177,9 @@
       };
       this.$().sortable(options);
       this.$().disableSelection();
-    } }); App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, { tagName: 'ul',
+    } }); 
+  
+  App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, { tagName: 'ul',
     classNames: ['projects-list'],
     listItems: Ember.A([]),
     didOpenPopupMenu: false,
@@ -204,12 +215,14 @@
       });
     },
     click: function() {
+      /*
       if (!this.get('didOpenPopupMenu')) {
         this.closeAllPopupMenus();
       }
       else {
         this.set('didOpenPopupMenu', false);
       }
+      */
     },
     openProjectPopupMenu: function(item) {
       this.closeAllPopupMenus();
@@ -222,8 +235,7 @@
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
           console.log('deferred OK');
-          item.set('editorMode', false);
-          self.rerender();
+          // self.rerender();
         },
         function(reason) {
           console.log('deferred Failed! -- ' + reason);
@@ -310,10 +322,10 @@
       }
     },
     _showMenuTrigger: function() {
-      this.get('menuTriggerBtn').setVisibility(true);
+      //this.get('menuTriggerBtn').setVisibility(true);
     },
     _hideMenuTrigger: function() {
-      this.get('menuTriggerBtn').setVisibility(false);
+      //this.get('menuTriggerBtn').setVisibility(false);
     },
     _hideDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'hidden');
@@ -353,7 +365,7 @@
     }),
     init: function() {
       this._super();
-      this.get('parentItem').setChildComponent('menuTriggerBtn', this);
+      // this.get('parentItem').setChildComponent('menuTriggerBtn', this);
     },
     setVisibility: function(isVisible) {
       val = isVisible? 'visible' : 'hidden';
