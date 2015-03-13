@@ -46,6 +46,14 @@
     find: function(id) {
     },
     remove: function(id) {
+    },
+    updatePriorities: function(priorities) {
+      return $.ajax({
+        url: '/projects/priority',
+        type: 'PUT',
+        dataType: 'JSON',
+        data: JSON.stringify(priorities)
+      });
     }
   });
 
@@ -80,11 +88,14 @@
       }
       return (parseInt(this.get('lastObject').get('id')) + 1).toString();
     }),
+    hasNewProject: Ember.computed('@each.isNew', function() {
+       return this.filterBy("isNew", true).get("length") > 0;
+    }),
     actions: {
-      updateProjectsPriorities: function(priorities) {
-        var i = 0;
-        console.log('---------------------');
+      updateProjectsPriorities: function(params) {
+        var priorities = params.priorities;
         Ember.beginPropertyChanges();
+        /*
         this.get('model').forEach(function(item) {
           i = i + 1; 
 
@@ -94,9 +105,33 @@
 
           item.set('priority', p);
         }, this);
-        console.log('counter: ' + i);
-        console.log('---------------------');
+        */
+
+        var self = this;
+        priorities.forEach(function(element, index, array) {
+          var itemID = array[index].id;
+          var itemIdx = array[index].idx;
+          var item = self.get('model').findBy('id', itemID);
+          if (item) {
+            item.set('priority', itemIdx);
+          }
+          else {
+            console.log('update projects proorities -- error!');
+            console.log('id: ' + itemID + ' -- ' + 'p: '+ itemIdx);
+          }
+        });
         Ember.endPropertyChanges();
+        
+       if (this.get('hasNewProject') === false) {
+         App.Project.updatePriorities(priorities).then(function(respData) {
+           Ember.run(function() {
+             params.deferred.resolve(respData);
+           });
+         },
+         function(error) {
+           params.deferred.reject(error);
+         });
+       }
       }, 
       newProject: function() {
         var data = {
@@ -166,10 +201,11 @@
         handle: self.get('sortableHandleQueryStr'),
         cursor: 'move',
         update: function(evt, ui) {
-          var indices = {};
+          var indices = [];
           self.$().find(self.get('sortableItemQueryStr')).each(function(index) {
-            var itemID = $(this).attr(self.get('sortableItemIDAttr'));
-            indices[itemID]= index;
+            var itemID = parseInt($(this).attr(self.get('sortableItemIDAttr')));
+            // indices[itemID]= index;
+            indices.push({id: itemID, idx: index});
           });
           self.$().sortable('cancel');
           self.didUpdateSortable(indices);
@@ -197,9 +233,20 @@
       this._super();
     },
     didUpdateSortable: function(indices) {
-      this.get('listItems').clear();
       this.rerender();
-      this.sendAction('updateSortable', indices);
+      var self = this;
+      var deferred = Ember.RSVP.defer();
+      deferred.promise.then(function(data) {
+        console.log('update sortable deferred OK');
+      },
+      function(reason) {
+        console.log('deferred Failed! -- ' + reason);
+      });
+      var params = {
+        priorities: indices,
+        deferred: deferred
+      };
+      this.sendAction('updateSortable', params);
     },
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
@@ -240,8 +287,6 @@
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
           console.log('deferred OK');
-          //self.rerender();
-          //self.clearListItems();
         },
         function(reason) {
           console.log('deferred Failed! -- ' + reason);
@@ -262,12 +307,15 @@
       }
     },
     cancelEdit: function(item) {
-      if (item.get('isNew')) {
+      if (item.get('isNew') === true) {
         var params = {
           id: item.get('pid'),
           isNew: item.get('isNew')
         };
         this.sendAction('removeProject', params);
+      }
+      else {
+        item.set('editorMode', false);
       }
     }
   });
@@ -316,8 +364,8 @@
       this.set('isMenuVisible', !this.get('isMenuVisible'));
     },
     click: function() {
-      //this.get('parentList').clearSelection();
-      //this.set('isSelected', true);
+      this.get('projectsList').clearSelection();
+      this.set('isSelected', true);
     },
     mouseEnter: function() {
       if (!this.get('editorMode')) {

@@ -49,5 +49,6 @@ $app->container->singleton('App/Projects', function($container) {
 $app->get('/test', '\App\Controller\DashboardController:index');
 $app->get('/projects', '\App\Controller\ProjectsController:index');
 $app->post('/projects', '\App\Controller\ProjectsController:create');
+$app->put('/projects/:property', '\App\Controller\ProjectsController:update');
 
 return $app;

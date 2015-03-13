@@ -51,4 +51,28 @@ class ProjectsController extends \App\Controller\AppController
     $this->response->header('Content-Type', 'application/json');
     echo json_encode($resp, JSON_NUMERIC_CHECK);
   }
+
+  public function update($property) {
+    $body = $this->request->getBody();
+    $req = json_decode($body);
+    
+    $dbCon = DBConFactory::createConnection();
+    $dbCon->getHandle();
+    $columnName = "project_{$property}";
+    $sql = "UPDATE projects SET {$columnName}=:value WHERE project_id=:id";
+    $stmt = $dbCon->getHandle()->prepare($sql);
+    foreach ($req as $u) {
+      $stmt->execute(array(
+        ':id' => (int)($u->id), 
+        ':value' => (int)($u->idx)
+      ));
+    }
+    $resp = array(
+      'property' => $property,
+      'sql' => $sql
+    );
+    $this->response->header('Content-Type', 'application/json');
+    $this->response->setStatus(200);
+    echo json_encode($resp, JSON_NUMERIC_CHECK);
+  }
 }
