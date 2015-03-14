@@ -64,7 +64,7 @@ class ProjectsController extends \App\Controller\AppController
     foreach ($req as $u) {
       $stmt->execute(array(
         ':id' => (int)($u->id), 
-        ':value' => (int)($u->idx)
+        ':value' => $u->value
       ));
     }
     $resp = array(

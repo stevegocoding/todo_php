@@ -47,6 +47,14 @@
     },
     remove: function(id) {
     },
+    updateDesc: function(data) {
+      return $.ajax({
+        url: 'projects/desc',
+        type: 'PUT',
+        dataType: 'JSON',
+        data: JSON.stringify(data)
+      });
+    },
     updatePriorities: function(priorities) {
       return $.ajax({
         url: '/projects/priority',
@@ -110,7 +118,7 @@
         var self = this;
         priorities.forEach(function(element, index, array) {
           var itemID = array[index].id;
-          var itemIdx = array[index].idx;
+          var itemIdx = array[index].value;
           var item = self.get('model').findBy('id', itemID);
           if (item) {
             item.set('priority', itemIdx);
@@ -172,8 +180,15 @@
           }
         }
       },
-      updateProject: function(data) {
-        console.log('update');
+      updateProjectDesc: function(params) {
+        App.Project.updateDesc(params.data).then(function(respData) {
+          Ember.run(function() {
+            params.deferred.resolve(respData);
+          });
+        },
+        function(error) {
+          params.deferred.reject(error);
+        });
       }
     }
   });
@@ -205,7 +220,7 @@
           self.$().find(self.get('sortableItemQueryStr')).each(function(index) {
             var itemID = parseInt($(this).attr(self.get('sortableItemIDAttr')));
             // indices[itemID]= index;
-            indices.push({id: itemID, idx: index});
+            indices.push({id: itemID, value: index});
           });
           self.$().sortable('cancel');
           self.didUpdateSortable(indices);
@@ -301,8 +316,20 @@
       }
       else {
         var params = {
-          desc: item.get('desc'),
+          data: [{
+            id: item.get('pid'),
+            value: item.get('desc')
+          }]
         };
+        var deferred = Ember.RSVP.defer();
+        deferred.promise.then(function(data) {
+          console.log('deferred OK');
+          item.set('editorMode', false);
+        },
+        function(reason) {
+          console.log('deferred Failed! -- ' + reason);
+        });
+        params.deferred = deferred;
         this.sendAction('updateProject', params);
       }
     },
