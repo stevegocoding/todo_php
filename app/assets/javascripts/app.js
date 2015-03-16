@@ -64,6 +64,76 @@
       });
     }
   });
+  
+  ////////////////////////////////////////
+  
+  App.Task = Ember.Object.extend({
+    id: -1,
+    desc: '',
+    dueDate: ''
+  });
+  
+  App.Task.reopenClass({
+    findAll: function() {
+      return $.ajax({
+        url: '/tasks',
+        type: 'GET',
+        dataType: 'JSON'
+      });
+    },
+    findByProject: function(projectID) {
+      return $.ajax({
+        url: '/tasks',
+        type: 'GET',
+        dataType: 'GET',
+        data: {
+          project_id: projectID
+        }
+      });
+    },
+    findByFilter: function(filterName) {
+      return $.ajax({
+        url: '/tasks/filtered',
+        type: 'GET',
+        dataType: 'GET',
+        data: {
+          filter: filterName
+        }
+      });
+    },
+    saveNew: function(newTask) {
+      return $.ajax({
+        url: '/tasks',
+        type: 'POST',
+        dataType: 'JSON',
+        data: JSON.stringify(newTask)
+      });
+    },
+    updateDesc: function(data) {
+      return $.ajax({
+        url: '/tasks/desc',
+        type: 'PUT',
+        dataType: 'JSON',
+        data: JSON.stringify(data)
+      });
+    },
+    updateDueDate: function(data) {
+      return $.ajax({
+        url: '/tasks/duedate',
+        type: 'PUT',
+        dataType: 'JSON',
+        data: JSON.stringify(data)
+      });
+    },
+    remove: function(data) {
+      return $.ajax({
+        url: '/tasks',
+        type: 'DELETE',
+        dataType: 'JSON',
+        data: JSON.stringify(data)
+      });
+    }
+  });
 
   /***************************************
    * Routes 
@@ -559,6 +629,10 @@
     layoutName: 'components/menu-entry'
   });
   Ember.Handlebars.helper('horizontal-menu-entry', App.HorizontalMenuEntryComponent);
+  
+  App.TasksController = Ember.ArrayController.extend({
+    
+  });
   
 
 }(window, window.Ember, window.jQuery));

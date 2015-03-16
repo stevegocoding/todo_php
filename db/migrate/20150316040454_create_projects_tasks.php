@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateTasks extends AbstractMigration
+class CreateProjectsTasks extends AbstractMigration
 {
     /**
      * Change Method.
@@ -21,20 +21,23 @@ class CreateTasks extends AbstractMigration
      * Migrate Up.
      */
     public function up()
-    {      
+    {
       $sql = 
-        "CREATE TABLE tasks
+        " CREATE TABLE projects_tasks
         (
-          task_id         INT             PRIMARY KEY     AUTO_INCREMENT,
-          task_desc       VARCHAR(255)    NOT NULL,
-          task_due_date   DATETIME        NOT NULL,
-          task_done_date  DATETIME        DEFAULT NULL,
-          parent_task_id  INT             NULL            DEFAULT NULL,
-          created_on      TIMESTAMP       NOT NULL,
-          CONSTRAINT tasks_fk_parent_tasks
-            FOREIGN KEY (parent_task_id)
+          project_id            INT         NOT NULL,
+          task_id               INT         NOT NULL,
+          task_sort_idx         INT         NOT NULL,
+          PRIMARY KEY pk_projects_to_tasks (project_id, task_id),
+          CONSTRAINT fk_projects
+            FOREIGN KEY (project_id)
+            REFERENCES projects (project_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+          CONSTRAINT fk_tasks
+            FOREIGN KEY (task_id)
             REFERENCES tasks (task_id)
-            ON DELETE SET NULL
+            ON DELETE CASCADE
             ON UPDATE CASCADE
         ) ENGINE=InnoDB;
         ";

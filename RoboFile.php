@@ -141,7 +141,8 @@ class RoboFile extends \Robo\Tasks
     $columnNames = array('project_desc', 'project_priority', 'user_id');
 
     $data = array();
-    for ($i = 0; $i < 5; $i++) {
+    $data[] = array('inbox', 0, 1);
+    for ($i = 1; $i < 5; $i++) {
       $data[] = array($faker->text(20), $i, 1);
     }
     $insertValues = array();
@@ -169,7 +170,7 @@ class RoboFile extends \Robo\Tasks
 
   private function fakeTasks($db, $faker)
   {
-    $columnNames = array('task_desc', 'task_due_date', 'task_done_date', 'parent_task_id', 'project_id');
+    $columnNames = array('task_desc', 'task_due_date', 'task_done_date', 'parent_task_id');
     
     $data = array();
     
@@ -177,14 +178,14 @@ class RoboFile extends \Robo\Tasks
     for ($i = 0; $i < 5; $i++) {
       $dueDate = $faker->dateTimeBetween('-1 day', 'now')->format('Y-m-d H:i:s');
       $doneDate = null;
-      $data[] = array($faker->text(20), $dueDate, $doneDate, null, 1);
+      $data[] = array($faker->text(20), $dueDate, $doneDate, null);
     }
 
     // done tasks 
     for ($i = 0; $i < 5; $i++) {
       $dueDate = $faker->dateTimeBetween('-3 day', 'now')->format('Y-m-d H:i:s');
       $doneDate = $faker->dateTimeBetween('now', 'now')->format('Y-m-d H:i:s');
-      $data[] = array($faker->text(20), $dueDate, $doneDate, 1, 1);
+      $data[] = array($faker->text(20), $dueDate, $doneDate, null);
     }
     
     $insertValues = array();
@@ -200,6 +201,37 @@ class RoboFile extends \Robo\Tasks
       . implode(',', $questionMarks);
 
     //var_dump($insertValues);
+    
+    $db->beginTransaction();
+    $stmt = $db->prepare($sql);
+    try {
+      $stmt->execute($insertValues);
+    }
+    catch (PDOException $e) {
+      echo $e->getMessage();
+    }
+    $db->commit();
+  }
+
+  private function fakeProjectsTasksRelation($db) {
+   
+    $data = array();
+    $data[] = array(1, 1, 0);
+    $data[] = array(1, 2, 1);
+    $data[] = array(2, 2, 0);
+    $data[] = array(2, 3, 1);
+    $data[] = array(2, 4, 2);
+    
+    $insertValues = array();
+    foreach($data as $d) {
+      $questionMarks[] = '(' . $this->placeholders('?', sizeof($d)) . ')';
+      $insertValues = array_merge($insertValues, $d);
+    }
+    
+    $sql = "
+    INSERT INTO projects_tasks (project_id, task_id, task_sort_idx) 
+      VALUES " 
+      . implode(',', $questionMarks);
     
     $db->beginTransaction();
     $stmt = $db->prepare($sql);
@@ -243,6 +275,8 @@ class RoboFile extends \Robo\Tasks
       
       // Create fake tasks
       $this->fakeTasks($db, $faker);
+     
+      $this->fakeProjectsTasksRelation($db);
         
     }
     catch(PDOException $e) {
