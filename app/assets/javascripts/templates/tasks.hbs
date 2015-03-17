@@ -1,0 +1,4 @@
+{{#each group in controller.taskGroups}}
+  {{group.header}}
+  {{tasks-list taskItems=group.list}}
+{{/each}}

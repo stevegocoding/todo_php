@@ -33,7 +33,8 @@ class ProjectsController extends \App\Controller\AppController
     echo json_encode($projects, JSON_NUMERIC_CHECK);
   }
 
-  public function create() {
+  public function create() 
+  {
     $body = $this->request->getBody();
     $req = json_decode($body);
 
@@ -52,7 +53,8 @@ class ProjectsController extends \App\Controller\AppController
     echo json_encode($resp, JSON_NUMERIC_CHECK);
   }
 
-  public function update($property) {
+  public function update($property) 
+  {
     $body = $this->request->getBody();
     $req = json_decode($body);
     

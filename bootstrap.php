@@ -45,10 +45,16 @@ $app->container->singleton('App/Dashboard', function($container) {
 $app->container->singleton('App/Projects', function($container) {
   return new \App\Controller\ProjectsController($app);
 });
+$app->container->singleton('App/Tasks', function($container) {
+  return new \App\Controller\TasksController($app);
+});
+
 
 $app->get('/test', '\App\Controller\DashboardController:index');
 $app->get('/projects', '\App\Controller\ProjectsController:index');
 $app->post('/projects', '\App\Controller\ProjectsController:create');
 $app->put('/projects/:property', '\App\Controller\ProjectsController:update');
+
+$app->get('/tasks/project', '\App\Controller\TasksController:findByProject');
 
 return $app;
