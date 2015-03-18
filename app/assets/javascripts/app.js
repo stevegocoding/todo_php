@@ -3,17 +3,19 @@
    * Application 
    **************************************/
   App = Ember.Application.create({
+    /*
     LOG_ACTIVE_GENERATION: true,
     LOG_TRANSITIONS: true,
     LOG_TRANSITIONS_INTERNAL: true,
     LOG_VIEW_LOOKUPS: true
+    */
   });
   
   /***************************************
    * Routes 
    **************************************/
   App.Router.map(function() {
-    this.route('dashboard', {path: '/dashboard'});
+    this.resource('tasks');
   });
   
   /***************************************
@@ -101,11 +103,13 @@
           return App.Task.create(task);
         });
       });
-      /*
-      .then(function(data) {
-        console.log('find by project -- OK');
-      });
-      */
+    },
+    findByProject2: function(projectName) {
+      return [
+        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1}),
+        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1}),
+        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1})
+      ];
     },
     findByFilter: function(filterNames) {
       return $.ajax({
@@ -154,11 +158,108 @@
   /***************************************
    * Routes 
    **************************************/
-  App.DashboardRoute = Ember.Route.extend({
+  App.TasksRoute = Ember.Route.extend({      
+    model: function(params, transition) {
+      // 1. params with dynamic segments & query params
+      // 2. transition.params is a hash or route hierarchy
+      // 3. this will only be called first time entering the route
+      // 4. all internal transitions will not call model hook
+      
+      return App.Task.findByProject(params.projectParam);
+      /*
+      return [
+        Ember.Object.create({id:1, desc: params.projectParam, project: params.projectParam, sortIdx: 1}),
+        Ember.Object.create({id:1, desc: params.projectParam, project: params.projectParam, sortIdx: 1}),
+        Ember.Object.create({id:1, desc: params.projectParam, project: params.projectParam, sortIdx: 1})
+      ];
+      */
+    },
+    renderTemplate: function() {
+      this.render({
+        outlet: 'ot',
+        into: 'application'
+      });
+    },
+    actions: {
+      queryParamsDidChange: function() {
+        this.refresh();
+      }
+    }
+  });
+  
+  App.GroupableMixin = Ember.Mixin.create({
+    groupProperty: null,
+
+    groupedContent: Ember.computed('groupProperty', function() {
+      return this.groupBy(this.groupProperty);
+    }),
+    groupBy: function(groupProperty) {
+      var groupedContent = [];
+      this.get('content').forEach(function(item) { 
+        var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
+
+        if (!hasGroup) { 
+          groupedContent.pushObject(Ember.Object.create({
+            header: item.get(groupProperty),
+            list: []
+          }));
+        }
+        groupedContent.findBy('header', item.get(groupProperty)).get('list').pushObject(item);
+      });
+      return groupedContent;
+    }
+  });
+  
+  App.TasksController = Ember.ArrayController.extend({
+    groupProperty: 'project',
+    
+    queryParams: ['projectParam'],
+   
+    projectParam: 'inbox',
+    filters: [],
+
+    // taskGroups: Ember.computed.alias('groupedContent')
+    taskGroups: Ember.computed('content', function() {
+      return [{
+        header: 'header',
+        list: this.get('content')
+      }]
+    })
+  });
+  
+  /*
+  App.TestRoute = Ember.Route.extend({
+    model: function(params, transition) {
+      return [
+        Ember.Object.create({name:params.category + ' test 1'}),
+        Ember.Object.create({name:params.category + ' test 1'}),
+        Ember.Object.create({name:params.category + ' test 1'})
+      ];
+    },
+    renderTemplate: function() {
+      this.render({
+        outlet: 'ot',
+        into: 'application'
+      });
+    },
+    actions: {
+      queryParamsDidChange: function() {
+        this.refresh();
+      }
+    }
+  });
+  
+  App.TestController = Ember.ArrayController.extend({
+    queryParams: ['category'],
+    category: 'default'
+  });
+  */
+  
+  App.ApplicationRoute = Ember.Route.extend({
     model: function(params, transition) {
       return Ember.RSVP.hash({
         projects: App.Project.findAll(),
-        overdueTasks: App.Task.findByProject(params.project)
+        overdueTasks: App.Task.findByProject2('inbox 22222')
       });
     },
     setupController: function(controller, model) {
@@ -166,14 +267,23 @@
       // this.controllerFor('tasks').set('model', model.tasks);
     },
     renderTemplate: function(controller, model) {
+      this._super(controller, model);
       var tasksController = this.controllerFor('tasks');
-      
       this.render('tasks', {
         outlet: 'ot',
         into: 'application',
         controller: tasksController,
         model: model.overdueTasks
       });
+    },
+    actions: {
+      showProjectTasks: function(params) {
+        console.log('show project tasks params - ' + params.project);
+        this.controllerFor('tasks').set('projectParam', params.project);
+        this.transitionTo('tasks');
+        //this.controllerFor('test').set('category', params.project);
+        //this.transitionTo('test');
+      }
     }
   });
   
@@ -181,12 +291,12 @@
   /***************************************
    * Controllers 
    **************************************/
-  App.DashboardController = Ember.ArrayController.extend({
-    queryParams: ['project'],
-    project: 'inbox'
+  App.ApplicationController = Ember.ArrayController.extend({
   });
   
   App.ProjectsController = Ember.ArrayController.extend({
+    needs: ['tasks'],
+      
     sortProperties: ['priority'],
     sortAscending: true,
     sortedProjects: Ember.computed.alias('arrangedContent'),
@@ -203,18 +313,6 @@
       updateProjectsPriorities: function(params) {
         var priorities = params.priorities;
         Ember.beginPropertyChanges();
-        /*
-        this.get('model').forEach(function(item) {
-          i = i + 1; 
-
-          var id = item.get('id');
-          var p = priorities[id];
-          console.log('id: ' + id + ' -- ' + 'p: '+ p);
-
-          item.set('priority', p);
-        }, this);
-        */
-
         var self = this;
         priorities.forEach(function(element, index, array) {
           var itemID = array[index].id;
@@ -291,13 +389,6 @@
         });
       }
     }
-  });
-  
-  /***************************************
-   * Dashboard View 
-   **************************************/
-  App.DashboardView = Ember.View.extend({
-    templateName: 'dashboard'
   });
   
   /***************************************
@@ -391,6 +482,12 @@
       else {
         this.set('didOpenPopupMenu', false);
       }
+    },
+    itemClicked: function(item) {
+      var params = {
+        project: item.get('desc')
+      };
+      this.sendAction('showProjectTasks', params);
     },
     openProjectPopupMenu: function(item) {
       this.closeAllPopupMenus();
@@ -492,8 +589,9 @@
       this.set('isMenuVisible', !this.get('isMenuVisible'));
     },
     click: function() {
-      this.get('projectsList').clearSelection();
       this.set('isSelected', true);
+      this.get('projectsList').clearSelection();
+      this.get('projectsList').itemClicked(this);
     },
     mouseEnter: function() {
       if (!this.get('editorMode')) {
@@ -661,77 +759,10 @@
   });
   Ember.Handlebars.helper('horizontal-menu-entry', App.HorizontalMenuEntryComponent);
 
-
   /////////////////////////////////////////////////////////////////////////////////
- 
   
-  App.TasksRoute = Ember.Route.extend({      
-    model: function(params, transition) {
-      // 1. params with dynamic segments & query params
-      // 2. transition.params is a hash or route hierarchy
-      // 3. this will only be called first time entering the route
-      // 4. all internal transitions will not call model hook
-      
-      
-    },
-    actions: {
-      queryParamsDidChange: function() {
-        this.refresh();
-      }
-    }
-  });
-  
-  
-  App.GroupableMixin = Ember.Mixin.create({
-    groupProperty: null,
-
-    groupedContent: Ember.computed('groupProperty', function() {
-      return this.groupBy(this.groupProperty);
-    }),
-    groupBy: function(groupProperty) {
-      var groupedContent = [];
-      this.get('content').forEach(function(item) { 
-        var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
-
-        if (!hasGroup) { 
-          groupedContent.pushObject(Ember.Object.create({
-            header: item.get(groupProperty),
-            list: []
-          }));
-        }
-        groupedContent.findBy('header', item.get(groupProperty)).get('list').pushObject(item);
-      });
-      return groupedContent;
-    }
-  });
-  
-  App.TasksController = Ember.ArrayController.extend(App.GroupableMixin, {
-    groupProperty: 'project',
-    
-    queryParams: ['project', 'filters'],
-   
-    project: null,
-    filters: [],
-
-    taskGroups: Ember.computed.alias('groupedContent')
 
 
-
-    /*
-    sortProperties: ['sortIdx'],
-    sortAscending: true,
-    
-    groupBy: Ember.computed('content', function(dependentKey) {
-    }),
-    
-    groupedByDueDate: groupby('@this', 'dueDate'),
-    sortedTasks: Ember.computed.alias('arrangedContent'),
-    
-    actions: {
-
-    }
-    */
-  });
   
   App.TasksListHeaderComponent = Ember.Component.extend({
     tagName: 'div',

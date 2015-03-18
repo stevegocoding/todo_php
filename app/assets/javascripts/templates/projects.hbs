@@ -1,4 +1,4 @@
 <div class="sidebar-projects-list">
-  {{projects-list items=controller.sortedProjects updateSortable='updateProjectsPriorities' addProject='createProject' removeProject='deleteProject' updateProject='updateProjectDesc'}}
+  {{projects-list items=controller.sortedProjects updateSortable='updateProjectsPriorities' addProject='createProject' removeProject='deleteProject' updateProject='updateProjectDesc' showProjectTasks='showProjectTasks'}}
   <button class="add-project-btn btn btn-primary" {{action 'newProject'}}>Add Project</button>
 </div>
