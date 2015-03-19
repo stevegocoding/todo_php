@@ -50,10 +50,11 @@
   @include sidebar-list(20px 0 20px 0);
   margin-left: gutter();
   
-  a {
+  .label {
     color: #737373;
     text-decoration: none;
-    font-weight: 600;
+    font-size: 1.25em;
+    font-weight: bold;
   }
   
   .inbox-filter {

@@ -3,12 +3,10 @@
    * Application 
    **************************************/
   App = Ember.Application.create({
-    /*
-    LOG_ACTIVE_GENERATION: true,
+    LOG_ACTIVE_GENERATION: false,
     LOG_TRANSITIONS: true,
-    LOG_TRANSITIONS_INTERNAL: true,
-    LOG_VIEW_LOOKUPS: true
-    */
+    LOG_TRANSITIONS_INTERNAL: false,
+    LOG_VIEW_LOOKUPS: false
   });
   
   /***************************************
@@ -202,7 +200,8 @@
       '7days': 7
     }),
     model: function(params, transition) {
-      var days = this.get('filterNameToDay').get(params.filter);
+      //var days = this.get('filterNameToDays').get(params.filter);
+      var days = params.dueInDays;
       return App.Task.findDueInDays(days);
     },
     renderTemplate: function() {
@@ -276,30 +275,19 @@
       '0': 'today',
       '7': '7days'
     }),
-    dueInDays: 0,
-    
-    queryParams: ['filter'],
-    filter: Ember.computed('dueInDays', function() {
-      return this.get('daysToFilterName').get(this.get('dueInDays').toString());
-    }),
+    queryParams: ['dueInDays'],
+    dueInDays: null,
     
     groupProperty: 'dueDate',
     taskGroups: Ember.computed.alias('groupedContent')
   });
   
   App.ProjectTasksController = Ember.ArrayController.extend({
-    groupProperty: 'project',
-    
     queryParams: ['projectParam'],
-    projectParam: 'inbox',
-
-    // taskGroups: Ember.computed.alias('groupedContent')
-    taskGroups: Ember.computed('content', function() {
-      return [{
-        header: 'header',
-        list: this.get('content')
-      }]
-    })
+    projectParam: null,
+    
+    projectName: Ember.computed.alias('projectParam'),
+    sortedTasks: Ember.computed.alias('content')  
   });
   
   /*
@@ -336,36 +324,51 @@
         projects: App.Project.findAll(),
         //overdueTasks: App.Task.findDueInDays(-1)
         overdueTasks: App.Task.findDueInDays(7)
+        //inboxTasks: App.Task.findByProject('inbox')
+          
       });
     },
     setupController: function(controller, model) {
       this.controllerFor('projects').set('model', model.projects);
       this.controllerFor('dateFilteredTasks').set('model', model.overdueTasks);
+      //this.controllerFor('projectTasks').set('model', model.inboxTasks);
     },
     renderTemplate: function(controller, model) {
       this._super(controller, model);
       var tasksController = this.controllerFor('dateFilteredTasks');
+      //var tasksController = this.controllerFor('projectTasks');
       this.render('date_tasks', {
         outlet: 'ot',
         into: 'application',
         controller: tasksController
       });
     },
+    transitToProjectTasks: function(project) {
+        this.transitionTo('projectTasks');
+        this.controllerFor('projectTasks').set('projectParam', project);
+    },
+    transitToDateTasks: function(days) {
+        this.transitionTo('dateFilteredTasks');
+        this.controllerFor('dateFilteredTasks').set('dueInDays', days);
+    },
     actions: {
+      showInboxTasks: function() {
+        this.transitToProjectTasks('inbox');
+      },
       showProjectTasks: function(params) {
-        console.log('show project tasks params - ' + params.project);
-        this.controllerFor('projectTasks').set('projectParam', params.project);
-        this.transitionTo('projectTasks');
-        //this.controllerFor('test').set('category', params.project);
-        //this.transitionTo('test');
-      }, 
+        this.transitToProjectTasks(params.project);
+      },
+      showTodayTasks: function() {
+        this.transitToDateTasks(0);
+      },
+      showWeekTasks: function() {
+        this.transitToDateTasks(7);
+      },
       showOverdueTasks: function(params) {
-        this.controllerFor('dateFilteredTasks').set('dueInDays', params.dueInDays);
-        this.transitionTo('projectTasks');
+        this.transitToDateTasks(-1);
       },
       showDueInDaysTasks: function(params) {
-        this.controllerFor('dateFilteredTasks').set('dueInDays', params.dueInDays);
-        this.transitionTo('projectTasks');
+        this.transitToDateTasks(params.days);
       }
     }
   });

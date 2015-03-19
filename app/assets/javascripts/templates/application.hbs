@@ -11,14 +11,14 @@
     <!-- Sidebar top section -->
     <div class="sidebar-top-section">
       <ul class="sidebar-top-filters">
-        <li class="inbox-filter">
-          <a href="#">Inbox</a>
+        <li class="inbox-filter" {{action 'showInboxTasks'}}>
+           <span class="label"> Inbox </span>
         </li>
-        <li class="today-filter">
-          <a href="#">Today</a>
+        <li class="today-filter" {{action 'showTodayTasks'}}>
+           <span class="label"> Today </span>
         </li>
-        <li class="seven-days-filter">
-          <a href="#">7 Days</a>
+        <li class="seven-days-filter" {{action 'showWeekTasks'}}>
+           <span class="label"> 7 Days </span>
         </li>
       </ul>
     </div> <!-- Sidebar top section -->
