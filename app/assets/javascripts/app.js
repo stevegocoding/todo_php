@@ -219,6 +219,33 @@
     }
   });
   
+  App.DaysGroup = Ember.Object.extend({
+    header: null,
+    list: [],
+    dueRelative: 0,
+    formattedDate: Ember.computed('header', function() {
+      return moment(this.get('header')).format("Do MMM");
+    }),
+    title: Ember.computed('header', function() {
+      var days = this.get('dueRelative');
+      if (days === 0) {
+        return 'Today';
+      }
+      else if (days === -1) {
+        return 'Yesterday';
+      }
+      else if (days === 1) {
+         return 'Tomorrow';
+      }
+      else {
+        if (days < 0) {
+          return (-1*days).toString() + ' days ago';
+        }
+        return moment(this.get('header')).format("dddd");
+      }
+    })
+  });
+
   App.GroupableMixin = Ember.Mixin.create({
     groupProperty: null,
 
@@ -231,8 +258,9 @@
         var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
 
         if (!hasGroup) { 
-          groupedContent.pushObject(Ember.Object.create({
+          groupedContent.pushObject(App.DaysGroup.create({
             header: item.get(groupProperty),
+            dueRelative: item.get('dueRelative'),
             list: []
           }));
         }
@@ -255,9 +283,8 @@
       return this.get('daysToFilterName').get(this.get('dueInDays').toString());
     }),
     
-    groupProperty: 'dueRelative',
+    groupProperty: 'dueDate',
     taskGroups: Ember.computed.alias('groupedContent')
-      
   });
   
   App.ProjectTasksController = Ember.ArrayController.extend({
@@ -307,7 +334,8 @@
     model: function(params, transition) {
       return Ember.RSVP.hash({
         projects: App.Project.findAll(),
-        overdueTasks: App.Task.findDueInDays(-1)
+        //overdueTasks: App.Task.findDueInDays(-1)
+        overdueTasks: App.Task.findDueInDays(7)
       });
     },
     setupController: function(controller, model) {
