@@ -56,5 +56,6 @@ $app->post('/projects', '\App\Controller\ProjectsController:create');
 $app->put('/projects/:property', '\App\Controller\ProjectsController:update');
 
 $app->get('/tasks/project', '\App\Controller\TasksController:findByProject');
+$app->get('/tasks/due', '\App\Controller\TasksController:findDueInDays');
 
 return $app;

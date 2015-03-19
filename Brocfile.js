@@ -67,6 +67,7 @@ if (env === 'production') {
   bowerFiles = [
     'jquery/dist/jquery.min.js',
     'jquery-ui/jquery-ui.min.js',
+    'moment/min/moment.min.js',
     'ember/ember.min.js',
     'handlebars/handlebars.runtime.min.js'
   ]; 
@@ -78,6 +79,7 @@ else {
   bowerFiles = [
     'jquery/dist/jquery.min.js',
     'jquery-ui/jquery-ui.min.js',
+    'moment/min/moment.min.js',
     'ember/ember.debug.js',
     'handlebars/handlebars.runtime.js'
   ]; 

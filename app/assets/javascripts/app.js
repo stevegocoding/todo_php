@@ -1,4 +1,4 @@
-(function(window, Ember, $) {
+(function(window, Ember, $, moment) {
   /***************************************
    * Application 
    **************************************/
@@ -15,7 +15,8 @@
    * Routes 
    **************************************/
   App.Router.map(function() {
-    this.resource('tasks');
+    this.route('projectTasks', {path: '/tasks/project'});
+    this.route('dateFilteredTasks', {path: '/tasks/filtered'});
   });
   
   /***************************************
@@ -76,9 +77,18 @@
   App.Task = Ember.Object.extend({
     id: -1,
     desc: '',
-    //dueDate: '',
+    dueDate: '',
+    dueRelative: 0,
+    doneDate: null,
     project: '',
-    sortIdx: -1
+    sortIdx: -1,
+    
+    isOverdue: Ember.computed('dueRelative', function() {
+      return (this.get('dueRelative') < 0);
+    }),
+    isDone: Ember.computed('doneDate', function() {
+      return !!this.get('doneDate');
+    })
   });
   
   App.Task.reopenClass({
@@ -104,21 +114,18 @@
         });
       });
     },
-    findByProject2: function(projectName) {
-      return [
-        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1}),
-        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1}),
-        App.Task.create({id:1, desc: projectName, project: projectName, sortIdx: 1})
-      ];
-    },
-    findByFilter: function(filterNames) {
+    findDueInDays: function(dueInDays) {
       return $.ajax({
-        url: '/tasks/filtered',
+        url: '/tasks/due',
         type: 'GET',
         dataType: 'JSON',
         data: {
-          filters: filterNames
+          days: dueInDays
         }
+      }).then(function(data) {
+        return data.map(function(project) {
+          return App.Task.create(project);
+        });
       });
     },
     saveNew: function(newTask) {
@@ -158,7 +165,7 @@
   /***************************************
    * Routes 
    **************************************/
-  App.TasksRoute = Ember.Route.extend({      
+  App.ProjectTasksRoute = Ember.Route.extend({      
     model: function(params, transition) {
       // 1. params with dynamic segments & query params
       // 2. transition.params is a hash or route hierarchy
@@ -175,9 +182,34 @@
       */
     },
     renderTemplate: function() {
-      this.render({
+      this.render('project_tasks', {
         outlet: 'ot',
-        into: 'application'
+        into: 'application',
+        controller: 'projectTasks'
+      });
+    },
+    actions: {
+      queryParamsDidChange: function() {
+        this.refresh();
+      }
+    }
+  });
+  
+  App.DateFilteredTasksRoute = Ember.Route.extend({
+    filterNameToDays: Ember.Object.create({
+      'overdue': -1,
+      'today': 0,
+      '7days': 7
+    }),
+    model: function(params, transition) {
+      var days = this.get('filterNameToDay').get(params.filter);
+      return App.Task.findDueInDays(days);
+    },
+    renderTemplate: function() {
+      this.render('date_tasks', {
+        outlet: 'ot',
+        into: 'application',
+        controller: 'dateFilteredTasks'
       });
     },
     actions: {
@@ -190,12 +222,12 @@
   App.GroupableMixin = Ember.Mixin.create({
     groupProperty: null,
 
-    groupedContent: Ember.computed('groupProperty', function() {
-      return this.groupBy(this.groupProperty);
+    groupedContent: Ember.computed('content', 'groupProperty', function() {
+      return this.groupBy(this.get('content'), this.get('groupProperty'));
     }),
-    groupBy: function(groupProperty) {
+    groupBy: function(content, groupProperty) {
       var groupedContent = [];
-      this.get('content').forEach(function(item) { 
+      content.forEach(function(item) { 
         var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
 
         if (!hasGroup) { 
@@ -210,13 +242,29 @@
     }
   });
   
-  App.TasksController = Ember.ArrayController.extend({
+  App.DateFilteredTasksController = Ember.ArrayController.extend(App.GroupableMixin, {
+    daysToFilterName: Ember.Object.create({
+      '-1': 'overdue',
+      '0': 'today',
+      '7': '7days'
+    }),
+    dueInDays: 0,
+    
+    queryParams: ['filter'],
+    filter: Ember.computed('dueInDays', function() {
+      return this.get('daysToFilterName').get(this.get('dueInDays').toString());
+    }),
+    
+    groupProperty: 'dueRelative',
+    taskGroups: Ember.computed.alias('groupedContent')
+      
+  });
+  
+  App.ProjectTasksController = Ember.ArrayController.extend({
     groupProperty: 'project',
     
     queryParams: ['projectParam'],
-   
     projectParam: 'inbox',
-    filters: [],
 
     // taskGroups: Ember.computed.alias('groupedContent')
     taskGroups: Ember.computed('content', function() {
@@ -259,30 +307,37 @@
     model: function(params, transition) {
       return Ember.RSVP.hash({
         projects: App.Project.findAll(),
-        overdueTasks: App.Task.findByProject2('inbox 22222')
+        overdueTasks: App.Task.findDueInDays(-1)
       });
     },
     setupController: function(controller, model) {
       this.controllerFor('projects').set('model', model.projects);
-      // this.controllerFor('tasks').set('model', model.tasks);
+      this.controllerFor('dateFilteredTasks').set('model', model.overdueTasks);
     },
     renderTemplate: function(controller, model) {
       this._super(controller, model);
-      var tasksController = this.controllerFor('tasks');
-      this.render('tasks', {
+      var tasksController = this.controllerFor('dateFilteredTasks');
+      this.render('date_tasks', {
         outlet: 'ot',
         into: 'application',
-        controller: tasksController,
-        model: model.overdueTasks
+        controller: tasksController
       });
     },
     actions: {
       showProjectTasks: function(params) {
         console.log('show project tasks params - ' + params.project);
-        this.controllerFor('tasks').set('projectParam', params.project);
-        this.transitionTo('tasks');
+        this.controllerFor('projectTasks').set('projectParam', params.project);
+        this.transitionTo('projectTasks');
         //this.controllerFor('test').set('category', params.project);
         //this.transitionTo('test');
+      }, 
+      showOverdueTasks: function(params) {
+        this.controllerFor('dateFilteredTasks').set('dueInDays', params.dueInDays);
+        this.transitionTo('projectTasks');
+      },
+      showDueInDaysTasks: function(params) {
+        this.controllerFor('dateFilteredTasks').set('dueInDays', params.dueInDays);
+        this.transitionTo('projectTasks');
       }
     }
   });
@@ -295,7 +350,7 @@
   });
   
   App.ProjectsController = Ember.ArrayController.extend({
-    needs: ['tasks'],
+    needs: ['projectTasks'],
       
     sortProperties: ['priority'],
     sortAscending: true,
@@ -781,4 +836,4 @@
   });
   
 
-}(window, window.Ember, window.jQuery));
+}(window, window.Ember, window.jQuery, window.moment));
