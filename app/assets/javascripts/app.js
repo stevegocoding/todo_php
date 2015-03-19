@@ -290,34 +290,6 @@
     sortedTasks: Ember.computed.alias('content')  
   });
   
-  /*
-  App.TestRoute = Ember.Route.extend({
-    model: function(params, transition) {
-      return [
-        Ember.Object.create({name:params.category + ' test 1'}),
-        Ember.Object.create({name:params.category + ' test 1'}),
-        Ember.Object.create({name:params.category + ' test 1'})
-      ];
-    },
-    renderTemplate: function() {
-      this.render({
-        outlet: 'ot',
-        into: 'application'
-      });
-    },
-    actions: {
-      queryParamsDidChange: function() {
-        this.refresh();
-      }
-    }
-  });
-  
-  App.TestController = Ember.ArrayController.extend({
-    queryParams: ['category'],
-    category: 'default'
-  });
-  */
-  
   App.ApplicationRoute = Ember.Route.extend({
     model: function(params, transition) {
       return Ember.RSVP.hash({
