@@ -1,7 +1,46 @@
 (function(window, Ember, $, moment) {
+  // configure an authorizer to be used
+  window.ENV = window.ENV || {};
+  window.ENV['simple-auth'] = {
+    //authorizer: 'authorizer:custom'
+    routeAfterAuthentication: 'application',
+    
+    store: 'simple-auth-session-store:cookie'
+  };
+      
   /***************************************
    * Application 
    **************************************/
+  Ember.Application.initializer({
+    name: 'authentication',
+    after: 'simple-auth',
+    initialize: function(container, application) {
+      var applicationRoute = container.lookup('route:application');
+      var session          = container.lookup('simple-auth-session:main');
+      // handle the session events
+      session.on('sessionAuthenticationSucceeded', function() {
+        //applicationRoute.transitionTo('index');
+      });
+      session.on('sessionAuthenticationFailed', function() {
+        //Ember.Logger.debug('Session authentication failed!');
+      });
+      session.on('sessionInvalidationSucceeded', function() {
+        //applicationRoute.transitionTo('index');
+      });
+      session.on('sessionInvalidationFailed', function() {
+        //Ember.Logger.debug('Session invalidation failed!');
+      });
+      
+      // register the custom authenticator and authorizer so Ember Simple Auth can find them
+      var authenticator = container.lookup('authenticator:custom');
+      if (authenticator === null) {
+        application.register('authenticator:custom', App.CustomAuthenticator);
+      }
+      var cookieStore = container.lookup('simple-auth-session-store:cookie');
+      
+      //container.register('authorizer:custom', App.CustomAuthorizer);
+    }
+  });
   App = Ember.Application.create({
     LOG_ACTIVE_GENERATION: false,
     LOG_TRANSITIONS: true,
@@ -13,6 +52,10 @@
    * Routes 
    **************************************/
   App.Router.map(function() {
+    this.route('home', {path: '/home'});
+    this.route('login', {path: '/login'});
+    this.route('logout', {path: '/logout'});
+
     this.route('projectTasks', {path: '/tasks/project'});
     this.route('dateFilteredTasks', {path: '/tasks/filtered'});
   });
@@ -279,7 +322,14 @@
     dueInDays: null,
     
     groupProperty: 'dueDate',
-    taskGroups: Ember.computed.alias('groupedContent')
+    taskGroups: Ember.computed.alias('groupedContent'),
+      
+    resetController: function (controller, isExiting, transition) {
+      if (isExiting) {
+        // isExiting would be false if only the route's model was changing
+        controller.set('dueInDays', '0');
+      }
+    }
   });
   
   App.ProjectTasksController = Ember.ArrayController.extend({
@@ -287,17 +337,26 @@
     projectParam: null,
     
     projectName: Ember.computed.alias('projectParam'),
-    sortedTasks: Ember.computed.alias('content')  
+    sortedTasks: Ember.computed.alias('content'),
+
+    resetController: function (controller, isExiting, transition) {
+      if (isExiting) {
+        // isExiting would be false if only the route's model was changing
+        controller.set('projectParam', 'inbox');
+      }
+    }
   });
   
-  App.ApplicationRoute = Ember.Route.extend({
+  App.ApplicationRoute = Ember.Route.extend(SimpleAuth.ApplicationRouteMixin, {
+    beforeModel: function(transition) {
+      this._super(transition);
+    },
     model: function(params, transition) {
       return Ember.RSVP.hash({
         projects: App.Project.findAll(),
         //overdueTasks: App.Task.findDueInDays(-1)
         overdueTasks: App.Task.findDueInDays(7)
         //inboxTasks: App.Task.findByProject('inbox')
-          
       });
     },
     setupController: function(controller, model) {
@@ -316,14 +375,21 @@
       });
     },
     transitToProjectTasks: function(project) {
-        this.transitionTo('projectTasks');
-        this.controllerFor('projectTasks').set('projectParam', project);
+      this.transitionTo('projectTasks');
+      this.controllerFor('projectTasks').set('projectParam', project);
     },
     transitToDateTasks: function(days) {
-        this.transitionTo('dateFilteredTasks');
-        this.controllerFor('dateFilteredTasks').set('dueInDays', days);
+      this.transitionTo('dateFilteredTasks');
+      this.controllerFor('dateFilteredTasks').set('dueInDays', days);
     },
     actions: {
+      sessionAuthenticationSucceeded: function() {
+        console.log('sessionAuthenticationSucceeded');
+        this.refresh();
+      },
+      logout: function() {
+        this.get('session').invalidate();
+      },
       showInboxTasks: function() {
         this.transitToProjectTasks('inbox');
       },
@@ -345,11 +411,100 @@
     }
   });
   
+  App.IndexRoute = Ember.Route.extend({
+    beforeModel: function(transition) {
+      if (!this.get('session').get('isAuthenticated')) {
+        transition.abort();
+        this.transitionTo('home');
+      }
+    },
+    willTransition: function(transition) {
+      console.log('IndexRoute -- will transition');
+    }
+  });
+
+  App.HomeRoute = Ember.Route.extend({
+  });
+  
+
+  App.CustomAuthenticator = SimpleAuth.Authenticators.Base.extend({
+    tokenEndpoint: '/sessions',
+    restore: function(data) {
+      return new Ember.RSVP.Promise(function(resolve, reject) {
+        if (!Ember.isEmpty(data.sessionID)) {
+          resolve(data);
+        } else {
+          reject();
+        }
+      });
+    },
+    authenticate: function(credentials) {
+      var self = this;
+      return new Ember.RSVP.Promise(function(resolve, reject) {
+        Ember.$.ajax({
+          url:         self.tokenEndpoint,
+          type:        'POST',
+          data:        JSON.stringify({ identification: credentials.identification, password: credentials.password }),
+          contentType: 'application/json'
+        }).then(function(response) {
+          Ember.run(function() {
+            resolve({ sessionID: response.sessionID });
+          });
+        }, function(xhr, status, error) {
+          var response = JSON.parse(xhr.responseText);
+          Ember.run(function() {
+            reject(response.error);
+          });
+        });
+      });
+    },
+
+    invalidate: function() {
+      var self = this;
+      return new Ember.RSVP.Promise(function(resolve) {
+        Ember.$.ajax({ 
+          url: self.tokenEndpoint, 
+          type: 'DELETE' 
+        }).always(function() {
+          resolve();
+        })
+      });
+    },
+  });
+  
+  App.LoginRoute = Ember.Route.extend({
+  });
+  
+  App.LogoutRoute = Ember.Route.extend({
+  });
   
   /***************************************
    * Controllers 
    **************************************/
   App.ApplicationController = Ember.ArrayController.extend({
+  });
+  
+  App.LoginController = Ember.ObjectController.extend({
+    errorMessage: '',
+    remembeMe: false,
+    
+    // change the store's cookie expiration time depending on whether "remember me" is checked or not
+    rememberMeChanged: function() {
+      this.get('session.store').cookieExpirationTime = this.get('rememberMe') ? 1209600 : null;
+    }.observes('rememberMe'),
+      
+    actions: {
+      login: function() {
+        var self = this;
+        var cred = this.getProperties('identification', 'password');
+        this.get('session').authenticate('authenticator:custom', cred).then(function(data) {
+          console.log('Login Success!');
+        }, 
+        function(error) {
+          self.set('errorMessage', error.error);
+        });
+      }
+    }
   });
   
   App.ProjectsController = Ember.ArrayController.extend({
@@ -819,8 +974,6 @@
 
   /////////////////////////////////////////////////////////////////////////////////
   
-
-
   
   App.TasksListHeaderComponent = Ember.Component.extend({
     tagName: 'div',
@@ -837,6 +990,4 @@
   App.TasksListItemComponent = Ember.Component.extend({
     tagName: 'li'
   });
-  
-
 }(window, window.Ember, window.jQuery, window.moment));

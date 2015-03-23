@@ -16,8 +16,14 @@ class ProjectsController extends \App\Controller\AppController
   {
     $dbCon = DBConFactory::createConnection();
     $dbCon->getHandle();
-    $stmt = $dbCon->getHandle()->prepare("SELECT * FROM projects");
-    $stmt->execute();
+
+    $sql = "
+            SELECT *
+            FROM projects
+            WHERE user_id = :userID;
+          ";
+    $stmt = $dbCon->getHandle()->prepare($sql);
+    $stmt->execute(array(':userID' => $this->getCurrentUser()));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $projects = array();
@@ -41,7 +47,7 @@ class ProjectsController extends \App\Controller\AppController
     $dbCon = DBConFactory::createConnection();
     $dbCon->getHandle();
     $stmt = $dbCon->getHandle()->prepare("INSERT INTO projects (project_desc, project_priority, user_id) VALUES (:desc, :priority, :userID)");
-    $stmt->execute(array(':desc' => $req->desc, ':priority' => $req->priority, ':userID' => 1));
+    $stmt->execute(array(':desc' => $req->desc, ':priority' => $req->priority, ':userID' =>  $this->getCurrentUser()));
     $lastID = $dbCon->getHandle()->lastInsertId();
 
     $resp = array(

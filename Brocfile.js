@@ -69,6 +69,8 @@ if (env === 'production') {
     'jquery-ui/jquery-ui.min.js',
     'moment/min/moment.min.js',
     'ember/ember.min.js',
+    'ember-simple-auth/simple-auth.js',
+    'ember-simple-auth/simple-auth-cookie-store.js',
     'handlebars/handlebars.runtime.min.js'
   ]; 
   vendorFiles = [
@@ -81,6 +83,8 @@ else {
     'jquery-ui/jquery-ui.min.js',
     'moment/min/moment.min.js',
     'ember/ember.debug.js',
+    'ember-simple-auth/simple-auth.js',
+    'ember-simple-auth/simple-auth-cookie-store.js',
     'handlebars/handlebars.runtime.js'
   ]; 
   vendorFiles = [

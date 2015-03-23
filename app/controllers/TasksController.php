@@ -48,13 +48,20 @@ class TasksController extends \App\Controller\AppController
             ON t.task_id = pt.task_id
             INNER JOIN projects as p
             ON pt.project_id = p.project_id
-            WHERE p.project_desc = :projectName;
+            INNER JOIN users as u
+            ON u.user_id = p.user_id
+            WHERE p.user_id = :userID AND
+                  p.project_desc = :projectName;
           ";
 
     $resp = array('sql' => $sql);
     
     $stmt = $dbCon->getHandle()->prepare($sql);
-    $stmt->execute(array(':projectName' => $projectParam));
+    $stmt->execute(
+      array(
+        ':userID' => $this->getCurrentUser(),
+        ':projectName' => $projectParam
+      ));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $tasks = array();
@@ -102,13 +109,17 @@ class TasksController extends \App\Controller\AppController
             ON t.task_id = pt.task_id
             INNER JOIN projects as p
             ON pt.project_id = p.project_id
-            WHERE DATEDIFF(t.task_due_date, CURDATE()) BETWEEN 0 AND :dueInDays AND 
+            INNER JOIN users as u
+            ON u.user_id = p.user_id
+            WHERE p.user_id = :userID AND
+                  DATEDIFF(t.task_due_date, CURDATE()) BETWEEN 0 AND :dueInDays AND 
                   t.task_done_date IS NULL;
           ";
 
     $dbCon = DBConFactory::createConnection();
     $stmt = $dbCon->getHandle()->prepare($sql);
     $stmt->bindValue(':dueInDays', $days, PDO::PARAM_INT);
+    $stmt->bindValue(':userID', $this->getCurrentUser());
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -142,13 +153,18 @@ class TasksController extends \App\Controller\AppController
             ON t.task_id = pt.task_id
             INNER JOIN projects as p
             ON pt.project_id = p.project_id
-            WHERE DATEDIFF(CURDATE(), t.task_due_date) > 0 AND
+            INNER JOIN users as u
+            ON u.user_id = p.user_id
+            WHERE p.user_id = :userID AND
+                  DATEDIFF(CURDATE(), t.task_due_date) > 0 AND
                   t.task_done_date IS NULL;
           ";
     
     $dbCon = DBConFactory::createConnection();
     $stmt = $dbCon->getHandle()->prepare($sql);
-    $stmt->execute();
+    $stmt->execute(array(
+      ':userID' => $this->getCurrentUser()
+    ));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $tasks = array();

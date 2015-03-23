@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 if (!defined('__DIR__')) {
    define('__DIR__', dirname(__FILE__));
 }
@@ -51,6 +53,10 @@ $app->container->singleton('App/Tasks', function($container) {
 
 
 $app->get('/test', '\App\Controller\DashboardController:index');
+
+$app->post('/sessions', '\App\Controller\SessionsController:create');
+$app->delete('/sessions', '\App\Controller\SessionsController:destroy');
+
 $app->get('/projects', '\App\Controller\ProjectsController:index');
 $app->post('/projects', '\App\Controller\ProjectsController:create');
 $app->put('/projects/:property', '\App\Controller\ProjectsController:update');

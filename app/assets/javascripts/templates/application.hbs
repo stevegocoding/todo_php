@@ -1,63 +1,70 @@
+{{#if session.isAuthenticated}}
+
   <!-- Sidebar wrapper -->
-  <div class="sidebar-wrapper">
-    
-    <!-- Sidebar banner -->
-    <div class="sidebar-banner">
-      <div class="sidebar-logo">
-        <a href="#" class="sidebar-logo-icon"></a>
-      </div>
-    </div> <!-- Sidebar banner -->
-    
-    <!-- Sidebar top section -->
-    <div class="sidebar-top-section">
-      <ul class="sidebar-top-filters">
-        <li class="inbox-filter" {{action 'showInboxTasks'}}>
-           <span class="label"> Inbox </span>
-        </li>
-        <li class="today-filter" {{action 'showTodayTasks'}}>
-           <span class="label"> Today </span>
-        </li>
-        <li class="seven-days-filter" {{action 'showWeekTasks'}}>
-           <span class="label"> 7 Days </span>
-        </li>
-      </ul>
-    </div> <!-- Sidebar top section -->
-    
-    <!-- Sidebar tabs menu -->
-    <div class="sidebar-menu">
-      {{#horizontal-menu as |entry|}}
-        {{horizontal-menu-entry menuTitle=entry.title menuEntryAction=entry.action targetObject=view}}
-      {{/horizontal-menu}}
-    </div> <!-- Sidebar tabs menu -->
-    
-    {{render 'projects'}}
-    
-  </div> <!-- Sidebar wrapper -->
-    
-  <!-- Main content wrapper -->
-  <div class="main-wrapper"> 
-    <!-- Main top section -->
-    <div class="main-top-section">
-      <!-- Top search bar -->
-      <div class="top-search-bar">
-        <!-- <a href="#" class="toggle&#45;sidebar"><i class="fa fa&#45;bars fa&#45;lg"></i></a> -->
-        <form id="task-filter-form" class="task-filter-form">
-          <input type="text text_box" placeholder="Filter tasks" >
-        </form>
-      </div> <!-- Top search bar -->
-      <!-- Top icons -->
-      <ul class="top-icons-list">
-        <li class="top-icons-item">
-          <a href="#" id="add-task-btn" class="add-task"></a>
-        </li>
-        <li class="top-icons-item">
-          <a href="#" id="options-btn" class="options"></a>
-        </li>
-      </ul> <!-- Top icons -->
-    </div> <!-- Main top section -->
-    
-    <!-- Dahsboard index template -->
-    <h2>Hello From Application Index Template</h2>
-    {{outlet 'ot'}}
-    
-  </div> <!-- Main content wrapper -->
+    <div class="sidebar-wrapper">
+      
+      <!-- Sidebar banner -->
+      <div class="sidebar-banner">
+        <div class="sidebar-logo">
+          <a href="#" class="sidebar-logo-icon"></a>
+        </div>
+      </div> <!-- Sidebar banner -->
+      
+      <!-- Sidebar top section -->
+      <div class="sidebar-top-section">
+        <ul class="sidebar-top-filters">
+          <li class="inbox-filter" {{action 'showInboxTasks'}}>
+             <span class="label"> Inbox </span>
+          </li>
+          <li class="today-filter" {{action 'showTodayTasks'}}>
+             <span class="label"> Today </span>
+          </li>
+          <li class="seven-days-filter" {{action 'showWeekTasks'}}>
+             <span class="label"> 7 Days </span>
+          </li>
+        </ul>
+      </div> <!-- Sidebar top section -->
+      
+      <!-- Sidebar tabs menu -->
+      <div class="sidebar-menu">
+        {{#horizontal-menu as |entry|}}
+          {{horizontal-menu-entry menuTitle=entry.title menuEntryAction=entry.action targetObject=view}}
+        {{/horizontal-menu}}
+      </div> <!-- Sidebar tabs menu -->
+      
+      {{render 'projects'}}
+      
+    </div> <!-- Sidebar wrapper -->
+      
+    <!-- Main content wrapper -->
+    <div class="main-wrapper"> 
+      <!-- Main top section -->
+      <div class="main-top-section">
+        <!-- Top search bar -->
+        <div class="top-search-bar">
+          <!-- <a href="#" class="toggle&#45;sidebar"><i class="fa fa&#45;bars fa&#45;lg"></i></a> -->
+          <form id="task-filter-form" class="task-filter-form">
+            <input type="text text_box" placeholder="Filter tasks" >
+          </form>
+        </div> <!-- Top search bar -->
+        <!-- Top icons -->
+        <ul class="top-icons-list">
+          <li class="top-icons-item">
+            <a href="#" id="add-task-btn" class="add-task"></a>
+          </li>
+          <li class="top-icons-item">
+            <a href="#" id="options-btn" class="options"></a>
+          </li>
+        </ul> <!-- Top icons -->
+      </div> <!-- Main top section -->
+      
+      <!-- Dahsboard index template -->
+      <h2>Hello From Application Index Template</h2>
+      {{outlet 'ot'}}
+      
+    </div> <!-- Main content wrapper -->
+
+{{else}}
+  {{outlet}}
+
+{{/if}}
