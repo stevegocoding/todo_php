@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use PDO;
+use \App\Helpers\DBConFactory as DBConFactory;
+
 class AppController
 {
   protected $app;
@@ -54,5 +57,23 @@ class AppController
 
   protected function checkLogin()
   {
+    $currentUserID = $this->getCurrentUser();
+    if (!is_null($currentUserID)) 
+    {
+      $dbCon = DBConFactory::createConnection();
+      $sql = "
+              SELECT user_id
+              FROM users
+              WHERE user_id = :currentUserID;
+            ";
+      $stmt = $dbCon->getHandle()->prepare($sql);
+      $stmt->execute(array(':currentUserID' => $currentUserID));
+      if ($stmt->rowCount() == 1)
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

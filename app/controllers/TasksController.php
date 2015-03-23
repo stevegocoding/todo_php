@@ -15,7 +15,6 @@ class TasksController extends \App\Controller\AppController
   public function findAll() 
   {
     $dbCon = DBConFactory::createConnection();
-    $dbCon->getHandle();
     $stmt = $dbCon->getHandle()->prepare("SELECT * FROM tasks");
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -34,6 +33,18 @@ class TasksController extends \App\Controller\AppController
 
   public function findByProject() 
   {
+    /*
+    if (!$this->checkLogin())
+    {
+      $this->response->setStatus(401);
+      $this->response->header('Content-Type', 'application/json');
+      echo json_encode(array(
+        'status' => '401',
+        'message' => 'unauthorized'
+      ));
+      return;
+    }
+     */
     $dbCon = DBConFactory::createConnection();
     $dbCon->getHandle();
 
@@ -79,6 +90,18 @@ class TasksController extends \App\Controller\AppController
 
   public function findDueInDays()
   {
+    /*
+    if (!$this->checkLogin())
+    {
+      $this->response->setStatus(401);
+      $this->response->header('Content-Type', 'application/json');
+      echo json_encode(array(
+        'status' => '401',
+        'message' => 'unauthorized'
+      ));
+      return;
+    }
+     */
     $dbCon = DBConFactory::createConnection();
     $dbCon->getHandle();
 
