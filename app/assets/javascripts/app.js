@@ -377,51 +377,7 @@
     }
   });
  
-  App.AppRoute = Ember.Route.extend(SimpleAuth.AuthenticatedRouteMixin, {
-    model: function(params, transition) {
-      var self = this;
-      return Ember.RSVP.hash({
-        projects: App.Project.findAll(),
-        //overdueTasks: App.Task.findDueInDays(-1)
-        overdueTasks: App.Task.findDueInDays(7)
-        //inboxTasks: App.Task.findByProject('inbox')
-      });
-      /*
-      .then(function(hash) {
-        console.log('index route model OK');
-      },
-      function(reason) {
-        console.log('applicaiton route model error -- ');
-        if (reason.status === 401) {
-          transition.abort();
-          self.invalidateSession();
-        }
-      });
-      */
-    },
-    setupController: function(controller, model) {
-      this.controllerFor('app.projects').set('model', model.projects);
-      this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
-      //this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
-    },
-    renderTemplate: function(controller, model) {
-      this._super(controller, model);
-      /*
-      this.render('index', {
-        outlet: 'ot',
-        into: 'application'
-      });
-      */
-      /*
-      var tasksController = this.controllerFor('dateFilteredTasks');
-      //var tasksController = this.controllerFor('projectTasks');
-      this.render('date_tasks', {
-        outlet: 'ot',
-        into: 'index',
-        controller: tasksController
-      });
-      */
-    },
+  App.AppRoute = Ember.Route.extend({
     transitToProjectTasks: function(project) {
       this.transitionTo('app.projectTasks');
       this.controllerFor('app.projectTasks').set('projectParam', project);
@@ -449,6 +405,51 @@
       showDueInDaysTasks: function(params) {
         this.transitToDateTasks(params.days);
       }
+    }
+  });
+ 
+  App.AppIndexRoute = Ember.Route.extend(SimpleAuth.AuthenticatedRouteMixin, {
+    model: function(params, transition) {
+      var self = this;
+      return Ember.RSVP.hash({
+        projects: App.Project.findAll(),
+        //overdueTasks: App.Task.findDueInDays(-1)
+        overdueTasks: App.Task.findDueInDays(7),
+        inboxTasks: App.Task.findByProject('inbox')
+      });
+      /*
+      .then(function(hash) {
+        console.log('index route model OK');
+      },
+      function(reason) {
+        console.log('applicaiton route model error -- ');
+        if (reason.status === 401) {
+          transition.abort();
+          self.invalidateSession();
+        }
+      });
+      */
+    },
+    setupController: function(controller, model) {
+      this.controllerFor('app.projects').set('model', model.projects);
+      this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
+      this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
+    },
+    renderTemplate: function(controller, model) {
+      this._super(controller, model);
+      /*
+      this.render('index', {
+        outlet: 'ot',
+        into: 'application'
+      });
+      */
+      //var tasksController = this.controllerFor('app.dateFilteredTasks');
+      var tasksController = this.controllerFor('app.projectTasks');
+      this.render('app/project_tasks', {
+        //outlet: 'ot',
+        //into: 'index',
+        controller: tasksController
+      });
     }
   });
 
