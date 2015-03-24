@@ -1,26 +1,44 @@
+{{#if editorMode}}
 <table class="task-item-table">
   <tr>
-    <td class="handle-cell">
-      <span class="sortable-handle"></span>
-    </td>
-    
-    <td class="checkbox-cell">
-      {{input type='checkbox' checked=isDone}}
-    </td>
-    
-    <td class="desc-cell">
-      {{#if editorMode}}
-        <div class="editor-wrapper">{{task-textarea value=desc cols="40" rows="6"}} </div>
-        <button type="button" class="btn btn-tasks-save" {{action 'saveEditBtnAction'}}>Save</button>
-        <button type="button" class="btn btn-link" {{action 'cancelEditBtnAction'}}>Cancel</button>
-      {{else}}
-        <span class="sortable-list-item-content">
-          {{desc}}
-        </span>
-      {{/if}}
-    </td>
-    <td class="btn-cell">
-      {{icon-button parentItem=this btnType="menuToggleBtn" btnAction='openMenuBtnAction'}}
-    </td>
+      <td class="handle-cell">
+        <span class="sortable-handle"></span>
+      </td>
+      <td class="desc-edit-cell">
+        {{task-textfield value=desc}} 
+      </td>
+      <td class="datepicker-cell">
+        {{task-datepicker value=dueDate}}
+      </td>
+      <td class="btn-cell">
+        {{icon-button parentItem=this btnType="menuToggleBtn" btnAction='openMenuBtnAction'}}
+      </td>
   </tr>
 </table>
+{{else}}
+<table class="task-item-table">
+  <tr>
+      <td class="handle-cell">
+        <span class="sortable-handle"></span>
+      </td>
+      <td class="checkbox-cell">
+        {{input type='checkbox' checked=isDone}}
+      </td>
+      <td class="desc-cell">
+        <span class="sortable-list-item-content">{{desc}}</span>
+      </td>
+      <td class="btn-cell">
+        {{icon-button parentItem=this btnType="menuToggleBtn" btnAction='openMenuBtnAction'}}
+      </td>
+  </tr>
+</table>
+{{/if}}
+  
+{{#if editorMode}}
+<table>
+  <tr>
+  <td class="col"><button type="button" class="btn btn-tasks-save" {{action 'saveEditBtnAction'}}>Save</button></td>
+  <td class="col"><button type="button" class="btn btn-link" {{action 'cancelEditBtnAction'}}>Cancel</button></td>
+  </tr>
+</table>
+{{/if}}

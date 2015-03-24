@@ -345,11 +345,17 @@
     
     projectName: Ember.computed.alias('projectParam'),
     sortedTasks: Ember.computed.alias('content'),
-
-    resetController: function (controller, isExiting, transition) {
-      if (isExiting) {
-        // isExiting would be false if only the route's model was changing
-        controller.set('projectParam', 'inbox');
+    
+    actions: {
+      updateTasksSortIdx: function() {
+      },
+      newTask: function(param) {
+      },
+      createTask: function(param) {
+      },
+      deleteTask: function(param) {
+      },
+      updateTaskDesc: function(param) {
       }
     }
   });
@@ -674,6 +680,19 @@
     } 
   }); 
   
+  App.JQueryUIDatePickerMixin = Ember.Mixin.create({
+    didInsertElement: function() {
+      Ember.run.scheduleOnce('afterRender', this, function() {
+        this.$().datepicker({
+          showButtonPanel: true
+        });
+      });
+    },
+    willDestroyElement: function() {
+      this.$().datepicker('destroy');
+    }
+  });
+  
   App.ProjectsListComponent = Ember.Component.extend(App.JQueryUISortableMixin, { 
     tagName: 'ul',
     classNames: ['projects-list'],
@@ -917,6 +936,9 @@
     placeholder: 'Project name'
   });
   Ember.Handlebars.helper('project-textarea', App.ProjectItemTextAreaComponent);
+  
+  
+  
 
   /** Menu Component 
    **/
@@ -1081,9 +1103,18 @@
     },
   });
 
-  App.TaskItemTextAreaComponent = Ember.TextArea.extend({
+  App.TaskItemTextFieldComponent = Ember.TextField.extend({
     classNames: ['task-desc-input'],
-    placeholder: 'task description'
+    placeholder: 'task description',
+   
   });
-  Ember.Handlebars.helper('task-textarea', App.TaskItemTextAreaComponent);
+  Ember.Handlebars.helper('task-textfield', App.TaskItemTextFieldComponent);
+  
+  /** Datepicker component for tasks item
+   **/
+  App.TaskItemDatePickerComponent = Ember.TextField.extend(App.JQueryUIDatePickerMixin, {
+    classNames: ['task-datepicker-input'],
+    placeholder: 'due date'
+  });
+  Ember.Handlebars.helper('task-datepicker', App.TaskItemDatePickerComponent);
 }(window, window.Ember, window.jQuery, window.moment));
