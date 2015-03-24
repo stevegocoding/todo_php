@@ -46,5 +46,6 @@ body {
 .main-wrapper {
   // @include container;
   @include span(8 last);
+  height: 100vh;
   background-color: #fff;
 }

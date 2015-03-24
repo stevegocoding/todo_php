@@ -54,4 +54,36 @@ class SessionsController extends \App\Controller\AppController
   {
     $this->logoutUser();
   }
+ 
+  public function verify()
+  {
+    $currentUserID = $this->getCurrentUser();
+    if (!is_null($currentUserID)) 
+    {
+      $dbCon = DBConFactory::createConnection();
+      $sql = "
+              SELECT user_id
+              FROM users
+              WHERE user_id = :currentUserID;
+            ";
+      $stmt = $dbCon->getHandle()->prepare($sql);
+      $stmt->execute(array(':currentUserID' => $currentUserID));
+      if ($stmt->rowCount() == 1)
+      {
+        $this->response->header('Content-Type', 'application/json');
+        echo json_encode(array(
+          'status' => 'success',
+          'sessionID' => session_id()
+        ));
+        return;
+      }
+    }
+
+    $this->response->setStatus(401);
+    $this->response->header('Content-Type', 'application/json');
+    echo json_encode(array(
+      'status' => 'failed',
+      'error' => 'Invalid session!'
+    ));
+  }
 }

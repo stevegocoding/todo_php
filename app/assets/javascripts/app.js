@@ -123,6 +123,7 @@
     doneDate: null,
     project: '',
     sortIdx: -1,
+    isNew: false,
     
     isOverdue: Ember.computed('dueRelative', function() {
       return (this.get('dueRelative') < 0);
@@ -378,6 +379,20 @@
   });
  
   App.AppRoute = Ember.Route.extend({
+    model: function(params, transition) {
+      var self = this;
+      return Ember.RSVP.hash({
+        projects: App.Project.findAll(),
+        //overdueTasks: App.Task.findDueInDays(-1)
+        overdueTasks: App.Task.findDueInDays(7),
+        inboxTasks: App.Task.findByProject('inbox')
+      });
+    },
+    setupController: function(controller, model) {
+      this.controllerFor('app.projects').set('model', model.projects);
+      this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
+      this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
+    },
     transitToProjectTasks: function(project) {
       this.transitionTo('app.projectTasks');
       this.controllerFor('app.projectTasks').set('projectParam', project);
@@ -409,45 +424,31 @@
   });
  
   App.AppIndexRoute = Ember.Route.extend(SimpleAuth.AuthenticatedRouteMixin, {
-    model: function(params, transition) {
+    beforeModel: function(transition) {
+      this._super(transition);
       var self = this;
-      return Ember.RSVP.hash({
-        projects: App.Project.findAll(),
-        //overdueTasks: App.Task.findDueInDays(-1)
-        overdueTasks: App.Task.findDueInDays(7),
-        inboxTasks: App.Task.findByProject('inbox')
+      return new Ember.RSVP.Promise(function(resolve, reject) {
+        $.ajax({
+          url:         '/sessions/verify',
+          type:        'POST',
+          contentType: 'application/json'
+        }).then(function(response) {
+          Ember.run(function() {
+            resolve({ sessionID: response.sessionID });
+          });
+        }, function(xhr, status, error) {
+          var response = JSON.parse(xhr.responseText);
+          Ember.run(function() {
+            self.get('session').invalidate();
+            reject(response.error);
+          });
+        });
       });
-      /*
-      .then(function(hash) {
-        console.log('index route model OK');
-      },
-      function(reason) {
-        console.log('applicaiton route model error -- ');
-        if (reason.status === 401) {
-          transition.abort();
-          self.invalidateSession();
-        }
-      });
-      */
-    },
-    setupController: function(controller, model) {
-      this.controllerFor('app.projects').set('model', model.projects);
-      this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
-      this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
     },
     renderTemplate: function(controller, model) {
       this._super(controller, model);
-      /*
-      this.render('index', {
-        outlet: 'ot',
-        into: 'application'
-      });
-      */
-      //var tasksController = this.controllerFor('app.dateFilteredTasks');
       var tasksController = this.controllerFor('app.projectTasks');
       this.render('app/project_tasks', {
-        //outlet: 'ot',
-        //into: 'index',
         controller: tasksController
       });
     }
@@ -896,9 +897,8 @@
     btnClass: Ember.computed('btnType', function() {
       return Ember.String.dasherize(this.get('btnType'));
     }),
-    init: function() {
-      this._super();
-      this.get('parentItem').setChildComponent('menuTriggerBtn', this);
+    didInsertElement: function() {
+      this.get('parentItem').set('menuTriggerBtn', this);
     },
     setVisibility: function(isVisible) {
       val = isVisible? 'visible' : 'hidden';
@@ -1011,20 +1011,79 @@
 
   /////////////////////////////////////////////////////////////////////////////////
   
-  
   App.TasksListHeaderComponent = Ember.Component.extend({
     tagName: 'div',
     classNames: ['tasks-list-header']
   });
   
-  App.TasksListComponent = Ember.Component.extend({
+  App.TasksListComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
     tagName: 'ul',
     classNames: ['tasks-list'],
     
-    listItems: Ember.A([])
+    listItems: Ember.A([]),
+
+    addListItem: function(item) {
+      this.get('listItems').pushObject(item);
+    }
   });
  
-  App.TasksListItemComponent = Ember.Component.extend({
-    tagName: 'li'
+  App.TasksListItemComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
+    tagName: 'li',
+    classNames: ['ui-sortable-handle', 'sortable-list-item', 'tasks-list-item'],
+    editorMode: false,
+    isDone: false,
+    
+   // tasksList: null,
+    menuTriggerBtn: null,
+    
+    /** Sortable Mixin Config */
+    placeholderClass: 'ui-state-highlight-task',
+    sortableHandleQueryStr: '.sortable-handle',
+    sortableItemQueryStr: '.sortable-list-item',
+    sortableItemIDAttr: 'data-item-id',
+    
+    didInsertElement: function() {
+      this.get('tasksList').addListItem(this);
+      if (!this.get('editorMode')) {
+        this._hideDragHandle();
+        this._hideMenuTrigger();
+      }
+    },
+    
+    click: function() {
+      if (!this.get('editorMode')) {
+        this.set('editorMode', true);
+      }
+    },
+    mouseEnter: function() {
+      if (!this.get('editorMode')) {
+        this._showDragHandle();
+        this._showMenuTrigger();
+      }
+    },
+    mouseLeave: function() {
+      if (!this.get('editorMode')) {
+        this._hideDragHandle();
+        this._hideMenuTrigger();
+      }
+    },
+    _showMenuTrigger: function() {
+      this.get('menuTriggerBtn').setVisibility(true);
+    },
+    _hideMenuTrigger: function() {
+      this.get('menuTriggerBtn').setVisibility(false);
+    },
+    _hideDragHandle: function() {
+      this.$('.sortable-handle').css('visibility', 'hidden');
+    },
+    _showDragHandle: function() {
+      this.$('.sortable-handle').css('visibility', 'visible');
+    },
   });
+
+  App.TaskItemTextAreaComponent = Ember.TextArea.extend({
+    classNames: ['task-desc-input'],
+    placeholder: 'task description'
+  });
+  Ember.Handlebars.helper('task-textarea', App.TaskItemTextAreaComponent);
 }(window, window.Ember, window.jQuery, window.moment));

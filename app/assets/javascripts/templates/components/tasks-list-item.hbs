@@ -1,1 +1,26 @@
-{{desc}}
+<table class="task-item-table">
+  <tr>
+    <td class="handle-cell">
+      <span class="sortable-handle"></span>
+    </td>
+    
+    <td class="checkbox-cell">
+      {{input type='checkbox' checked=isDone}}
+    </td>
+    
+    <td class="desc-cell">
+      {{#if editorMode}}
+        <div class="editor-wrapper">{{task-textarea value=desc cols="40" rows="6"}} </div>
+        <button type="button" class="btn btn-tasks-save" {{action 'saveEditBtnAction'}}>Save</button>
+        <button type="button" class="btn btn-link" {{action 'cancelEditBtnAction'}}>Cancel</button>
+      {{else}}
+        <span class="sortable-list-item-content">
+          {{desc}}
+        </span>
+      {{/if}}
+    </td>
+    <td class="btn-cell">
+      {{icon-button parentItem=this btnType="menuToggleBtn" btnAction='openMenuBtnAction'}}
+    </td>
+  </tr>
+</table>

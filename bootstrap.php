@@ -55,6 +55,7 @@ $app->container->singleton('App/Tasks', function($container) {
 $app->get('/test', '\App\Controller\DashboardController:index');
 
 $app->post('/sessions', '\App\Controller\SessionsController:create');
+$app->post('/sessions/verify', '\App\Controller\SessionsController:verify');
 $app->delete('/sessions', '\App\Controller\SessionsController:destroy');
 
 $app->get('/projects', '\App\Controller\ProjectsController:index');
