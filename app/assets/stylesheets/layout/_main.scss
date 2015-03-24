@@ -96,10 +96,11 @@
     }
     .task-desc-input {
       resize: none;
-      height: 25px;
+      height: 30px;
       width: 100%;
     }
     .task-datepicker-input {
+      height: 30px;
     }
     border-bottom: 1px solid #e2e2e2;
   }
@@ -113,4 +114,7 @@
     @include icon-before($fa-var-ellipsis-v, 15px, 10px);
   }
   
+  .buttons-table {
+    margin-top: 10px;
+  }
 }

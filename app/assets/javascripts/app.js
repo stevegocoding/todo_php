@@ -224,16 +224,9 @@
       ];
       */
     },
-    /*
-    renderTemplate: function() {
-      this._super();
-      this.render('index/project_tasks', {
-        //outlet: 'ot',
-        into: 'index',
-        controller: 'projectTasks'
-      });
+    setupController: function(controller, model) {
+      this._super(controller, model);
     },
-    */
     actions: {
       queryParamsDidChange: function() {
         this.refresh();
@@ -252,15 +245,6 @@
       var days = params.dueInDays;
       return App.Task.findDueInDays(days);
     },
-      /*
-    renderTemplate: function() {
-      this.render('index/date_tasks', {
-        //outlet: 'ot',
-        into: 'index',
-        controller: 'dateFilteredTasks'
-      });
-    },
-    */
     actions: {
       queryParamsDidChange: function() {
         this.refresh();
@@ -340,13 +324,39 @@
   });
   
   App.TasksControllerMixin = Ember.Mixin.create({
+    nextID: Ember.computed(function() {
+      if (this.get('length') === 0) {
+        return 1;
+      }
+      return (parseInt(this.get('lastObject').get('id')) + 1).toString();
+    }),
+    
     updateTasksSortIdx: function() {
     },
     newTask: function(params) {
+      var data = {
+        id: this.get('nextID'),
+        desc: '',
+        dueDate: null,
+        dueRelative: null,
+        doneDate: null,
+        project: this.get('projectName'),
+        sortIdx: this.get('length'),
+        isNew: true
+      };
+      var newProj = App.Project.create(data);
+      this.pushObject(newProj);
     },
     createTask: function(params) {
+      
     },
     deleteTask: function(params) {
+      if (params.isNew === true) {
+        var obj = this.findBy('id', params.id);
+        if (obj.get('isNew') === true) {
+          this.removeObject(obj);
+        }
+      }
     },
     updateTaskDesc: function(params) {
       console.log('updateTaskDesc');
@@ -364,7 +374,7 @@
       updateTasksSortIdx: function(params) {
         this.updateTasksSortIdx(params);
       },
-      newTask: function(params) {
+      addNewTask: function(params) {
         this.newTask(params);
       },
       createTask: function(params) {
@@ -417,14 +427,13 @@
       this.controllerFor('app.projects').set('model', model.projects);
       this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
       this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
+      this.controllerFor('app.projectTasks').set('projectParam', 'inbox');
     },
     transitToProjectTasks: function(project) {
-      this.transitionTo('app.projectTasks');
-      this.controllerFor('app.projectTasks').set('projectParam', project);
+      this.transitionTo('app.projectTasks', {queryParams: {projectParam: project}});
     },
     transitToDateTasks: function(days) {
-      this.transitionTo('app.dateFilteredTasks');
-      this.controllerFor('app.dateFilteredTasks').set('dueInDays', days);
+      this.transitionTo('app.dateFilteredTasks', {queryParams: {dueInDays: days}});
     },
     actions: {
       showInboxTasks: function() {
@@ -1066,6 +1075,9 @@
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
     },
+    removeListItem: function(item) {
+      this.get('listItems').removeObject(item);
+    },
     saveEdit: function(item) {
       if (item.get('isNew')) {
         var self = this;
@@ -1106,10 +1118,10 @@
     cancelEdit: function(item) {
       if (item.get('isNew') === true) {
         var params = {
-          id: item.get('pid'),
+          id: item.get('tid'),
           isNew: item.get('isNew')
         };
-        this.sendAction('removeProject', params);
+        this.sendAction('removeTask', params);
       }
       else {
         item.set('editorMode', false);
@@ -1132,6 +1144,11 @@
     sortableItemQueryStr: '.sortable-list-item',
     sortableItemIDAttr: 'data-item-id',
     
+    willInsertElement: function() {
+      if (this.get('isNew') === true) {
+        this.set('editorMode', true);
+      }
+    },
     didInsertElement: function() {
       this.get('tasksList').addListItem(this);
       if (!this.get('editorMode')) {
@@ -1139,12 +1156,9 @@
         this._hideMenuTrigger();
       }
     },
-    
-      /*
-    click: function() {
+    willDestroyElement: function() {
+      this.get('tasksList').removeListItem(this);
     },
-    */
-
     mouseEnter: function() {
       if (!this.get('editorMode')) {
         this._showDragHandle();

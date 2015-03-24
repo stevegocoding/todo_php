@@ -2,4 +2,8 @@
   {{projectName}}
 </div>
 {{tasks-list taskItems=sortedTasks
-updateSortable='updateTasksSortIdx' updateTask='updateTaskDesc'}}
+updateSortable='updateTasksSortIdx' updateTask='updateTaskDesc'
+removeTask='deleteTask'}}
+
+<button {{action 'addNewTask'}} class="btn btn-link"> <i class="fa fa-plus
+fa-bg" style="margin-right:5px"></i>Add New Task </button>
