@@ -24,7 +24,7 @@
       <td class="checkbox-cell">
         {{input type='checkbox' checked=isDone}}
       </td>
-      <td class="desc-cell">
+      <td {{action 'triggerEditorMode'}} class="desc-cell">
         <span class="sortable-list-item-content">{{desc}}</span>
       </td>
       <td class="btn-cell">

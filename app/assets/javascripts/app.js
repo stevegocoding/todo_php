@@ -339,7 +339,21 @@
     }
   });
   
-  App.AppProjectTasksController = Ember.ArrayController.extend({
+  App.TasksControllerMixin = Ember.Mixin.create({
+    updateTasksSortIdx: function() {
+    },
+    newTask: function(params) {
+    },
+    createTask: function(params) {
+    },
+    deleteTask: function(params) {
+    },
+    updateTaskDesc: function(params) {
+      console.log('updateTaskDesc');
+    }
+  });
+  
+  App.AppProjectTasksController = Ember.ArrayController.extend(App.TasksControllerMixin, {
     queryParams: ['projectParam'],
     projectParam: null,
     
@@ -347,15 +361,20 @@
     sortedTasks: Ember.computed.alias('content'),
     
     actions: {
-      updateTasksSortIdx: function() {
+      updateTasksSortIdx: function(params) {
+        this.updateTasksSortIdx(params);
       },
-      newTask: function(param) {
+      newTask: function(params) {
+        this.newTask(params);
       },
-      createTask: function(param) {
+      createTask: function(params) {
+        this.createTask(params);
       },
-      deleteTask: function(param) {
+      deleteTask: function(params) {
+        this.deleteTask(params);
       },
-      updateTaskDesc: function(param) {
+      updateTaskDesc: function(params) {
+        this.updateTaskDesc(params);
       }
     }
   });
@@ -1046,6 +1065,55 @@
 
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
+    },
+    saveEdit: function(item) {
+      if (item.get('isNew')) {
+        var self = this;
+        var deferred = Ember.RSVP.defer();
+        deferred.promise.then(function(data) {
+          console.log('deferred OK');
+        },
+        function(reason) {
+          console.log('deferred Failed! -- ' + reason);
+        });
+        var params = {
+          id: item.get('pid'),
+          desc: item.get('desc'),
+          priority: item.get('priority'),
+          deferred: deferred
+        };
+        this.sendAction('addProject', params);
+      }
+      else {
+        var params = {
+          data: [{
+            id: item.get('pid'),
+            value: item.get('desc')
+          }]
+        };
+        var deferred = Ember.RSVP.defer();
+        deferred.promise.then(function(data) {
+          console.log('deferred OK');
+          item.set('editorMode', false);
+        },
+        function(reason) {
+          console.log('deferred Failed! -- ' + reason);
+        });
+        params.deferred = deferred;
+        this.sendAction('updateTask', params);
+      }
+    },
+    cancelEdit: function(item) {
+      if (item.get('isNew') === true) {
+        var params = {
+          id: item.get('pid'),
+          isNew: item.get('isNew')
+        };
+        this.sendAction('removeProject', params);
+      }
+      else {
+        item.set('editorMode', false);
+      }
     }
   });
  
@@ -1055,7 +1123,7 @@
     editorMode: false,
     isDone: false,
     
-   // tasksList: null,
+    tasksList: null,
     menuTriggerBtn: null,
     
     /** Sortable Mixin Config */
@@ -1072,11 +1140,11 @@
       }
     },
     
+      /*
     click: function() {
-      if (!this.get('editorMode')) {
-        this.set('editorMode', true);
-      }
     },
+    */
+
     mouseEnter: function() {
       if (!this.get('editorMode')) {
         this._showDragHandle();
@@ -1101,6 +1169,19 @@
     _showDragHandle: function() {
       this.$('.sortable-handle').css('visibility', 'visible');
     },
+    actions: {
+      triggerEditorMode: function() {
+        if (!this.get('editorMode')) {
+          this.set('editorMode', true);
+        }
+      },
+      saveEditBtnAction: function() {
+        this.get('tasksList').saveEdit(this);
+      },
+      cancelEditBtnAction: function() {
+        this.get('tasksList').cancelEdit(this);
+      }
+    }
   });
 
   App.TaskItemTextFieldComponent = Ember.TextField.extend({

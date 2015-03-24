@@ -1,4 +1,5 @@
 <div class="project-title">
   {{projectName}}
 </div>
-{{tasks-list taskItems=sortedTasks}}
+{{tasks-list taskItems=sortedTasks
+updateSortable='updateTasksSortIdx' updateTask='updateTaskDesc'}}
