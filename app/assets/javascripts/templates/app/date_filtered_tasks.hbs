@@ -1,5 +1,5 @@
 {{#each group in controller.taskGroups}}
-  <span> {{group.title}} </span> 
+  <span class="tasks-group-title"> {{group.title}} </span> 
   <span> {{group.formattedDate}} </span>
   {{tasks-list taskItems=group.list}}
 {{/each}}

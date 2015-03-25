@@ -246,6 +246,9 @@
       var days = params.dueInDays;
       return App.Task.findDueInDays(days);
     },
+    setupController: function(controller, model) {
+      this._super(controller, model);
+    },
     actions: {
       queryParamsDidChange: function() {
         this.refresh();
