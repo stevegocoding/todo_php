@@ -11,6 +11,38 @@ class TasksController extends \App\Controller\AppController
   {
     parent::__construct($app);
   }
+  
+  public function create() 
+  {
+    $body = $this->request->getBody();
+    $req = json_decode($body);
+
+    $dbCon = DBConFactory::createConnection();
+    $sql = "
+            INSERT INTO tasks (task_desc, task_due_date) VALUES (:desc, :dueDate);
+           ";
+    
+    $stmt = $dbCon->getHandle()->prepare($sql);
+    $stmt->bindParam(':desc', $req->desc, PDO::PARAM_STR);
+    $stmt->bindParam(':dueDate', $req->dueDate);
+    $stmt->execute();
+    $lastID = $dbCon->getHandle()->lastInsertId();
+
+    $sql2 = "
+            INSERT INTO projects_tasks (project_id, task_id, task_sort_idx) VALUES (:projectID, :taskID, :sortIdx);
+          ";
+    $stmt2 = $dbCon->getHandle()->prepare($sql2);
+    $stmt2->bindParam(':projectID', $req->projectID, PDO::PARAM_INT);
+    $stmt2->bindParam(':taskID', $lastID, PDO::PARAM_INT);
+    $stmt2->bindParam(':sortIdx', $req->sortIdx, PDO::PARAM_INT);
+    $stmt2->execute();
+
+    $resp = array(
+      'id' => $lastID
+    );
+    $this->response->header('Content-Type', 'application/json');
+    echo json_encode($resp, JSON_NUMERIC_CHECK);
+  }
 
   public function findAll() 
   {
@@ -53,6 +85,7 @@ class TasksController extends \App\Controller\AppController
             SELECT  t.task_id as t_id, 
                     t.task_desc as t_desc,
                     p.project_desc as t_project,
+                    p.project_id as t_project_id,
                     pt.task_sort_idx as t_idx
             FROM tasks as t
             INNER JOIN projects_tasks as pt 
@@ -81,6 +114,7 @@ class TasksController extends \App\Controller\AppController
         'id' => $task['t_id'], 
         'desc' => $task['t_desc'],
         'project' => $task['t_project'],
+        'project_id' => $task['t_project_id'],
         'sortIdx' => $task['t_idx']
       );
     }

@@ -121,7 +121,8 @@
     dueDate: '',
     dueRelative: 0,
     doneDate: null,
-    project: '',
+    projectID: 0,
+    projectDesc: '',
     sortIdx: -1,
     isNew: false,
     
@@ -340,7 +341,8 @@
         dueDate: null,
         dueRelative: null,
         doneDate: null,
-        project: this.get('projectName'),
+        projectID: this.get('projectID'),   
+        projectDesc: this.get('projectName'),
         sortIdx: this.get('length'),
         isNew: true
       };
@@ -348,7 +350,28 @@
       this.pushObject(newProj);
     },
     createTask: function(params) {
-      
+      var data = {
+        id: params.id,
+        desc: params.desc,
+        projectID: params.projectID,
+        projectDesc: params.projectDesc,
+        sortIdx: params.sortIdx,
+        dueDate: params.dueDate
+      };
+      var self = this;
+      App.Task.saveNew(data).then(function(respData, statusCode) {
+        Ember.run(function () {
+          var obj = self.findBy('id', params.id);
+          self.removeObject(obj); 
+          var newTask = App.Task.create(data);
+          newTask.set('id', respData['id']);
+          self.pushObject(newTask);
+          params.deferred.resolve(respData);
+        });
+      },
+      function(error) {
+        params.deferred.reject(error);
+      });
     },
     deleteTask: function(params) {
       if (params.isNew === true) {
@@ -366,8 +389,10 @@
   App.AppProjectTasksController = Ember.ArrayController.extend(App.TasksControllerMixin, {
     queryParams: ['projectParam'],
     projectParam: null,
+    project: null,
     
     projectName: Ember.computed.alias('projectParam'),
+    projectID: Ember.computed.alias('project.projectID'),
     sortedTasks: Ember.computed.alias('content'),
     
     actions: {
@@ -428,19 +453,24 @@
       this.controllerFor('app.dateFilteredTasks').set('model', model.overdueTasks);
       this.controllerFor('app.projectTasks').set('model', model.inboxTasks);
       this.controllerFor('app.projectTasks').set('projectParam', 'inbox');
+      
+      var inboxProject = model.projects.findBy('desc', 'inbox');
+      this.controllerFor('app.projectTasks').set('project', inboxProject);
     },
     transitToProjectTasks: function(project) {
-      this.transitionTo('app.projectTasks', {queryParams: {projectParam: project}});
+      this.controllerFor('app.projectTasks').set('project', project);
+      this.transitionTo('app.projectTasks', {queryParams: {projectParam: project.desc}});
     },
     transitToDateTasks: function(days) {
       this.transitionTo('app.dateFilteredTasks', {queryParams: {dueInDays: days}});
     },
     actions: {
       showInboxTasks: function() {
-        this.transitToProjectTasks('inbox');
+        var inboxProject = this.controllerFor('app.projects').get('model').findBy('desc', 'inbox');
+        this.transitToProjectTasks(inboxProject);
       },
       showProjectTasks: function(params) {
-        this.transitToProjectTasks(params.project);
+        this.transitToProjectTasks(params);
       },
       showTodayTasks: function() {
         this.transitToDateTasks(0);
@@ -783,7 +813,8 @@
     },
     itemClicked: function(item) {
       var params = {
-        project: item.get('desc')
+        id: item.get('pid'),
+        desc: item.get('desc')
       };
       this.sendAction('showProjectTasks', params);
     },
@@ -1070,6 +1101,7 @@
     tagName: 'ul',
     classNames: ['tasks-list'],
     
+    project: null,
     listItems: Ember.A([]),
 
     addListItem: function(item) {
@@ -1089,12 +1121,15 @@
           console.log('deferred Failed! -- ' + reason);
         });
         var params = {
-          id: item.get('pid'),
+          id: item.get('tid'),
           desc: item.get('desc'),
-          priority: item.get('priority'),
+          dueDate: item.get('dueDate'),
+          sortIdx: item.get('sortIdx'),
+          projectID: this.get('project.id'),
+          projectDesc: this.get('project.desc'),
           deferred: deferred
         };
-        this.sendAction('addProject', params);
+        this.sendAction('addTask', params);
       }
       else {
         var params = {
@@ -1133,6 +1168,7 @@
     tagName: 'li',
     classNames: ['ui-sortable-handle', 'sortable-list-item', 'tasks-list-item'],
     editorMode: false,
+    
     isDone: false,
     
     tasksList: null,
