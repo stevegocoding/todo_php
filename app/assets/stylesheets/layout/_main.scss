@@ -74,7 +74,12 @@
       text-decoration: line-through;
     }
   }
-  
+  .ui-state-highlight-task {
+    line-height: 1.5em;
+    height: 1.5em;
+    background-color: #bbb;
+  }
+
   .tasks-list-item {
     @include main-content-list-item(10px 0 10px 0);
     .handle-cell {

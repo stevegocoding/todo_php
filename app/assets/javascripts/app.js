@@ -1112,6 +1112,12 @@
     
     project: null,
     listItems: Ember.A([]),
+    
+    /** Sortable Mixin Config */
+    placeholderClass: 'ui-state-highlight-task',
+    sortableHandleQueryStr: '.sortable-handle',
+    sortableItemQueryStr: '.sortable-list-item',
+    sortableItemIDAttr: 'data-item-id',
 
     addListItem: function(item) {
       this.get('listItems').pushObject(item);
@@ -1190,22 +1196,17 @@
     }
   });
  
-  App.TasksListItemComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
+  App.TasksListItemComponent = Ember.Component.extend({
     tagName: 'li',
     classNames: ['ui-sortable-handle', 'sortable-list-item', 'tasks-list-item'],
     classNameBindings: ['isDone:is-done'],
+    attributeBindings: ['tid:data-item-id'],
     editorMode: false,
     
     isDone: false,
     
     tasksList: null,
     menuTriggerBtn: null,
-    
-    /** Sortable Mixin Config */
-    placeholderClass: 'ui-state-highlight-task',
-    sortableHandleQueryStr: '.sortable-handle',
-    sortableItemQueryStr: '.sortable-list-item',
-    sortableItemIDAttr: 'data-item-id',
     
     willInsertElement: function() {
       if (this.get('isNew') === true) {
