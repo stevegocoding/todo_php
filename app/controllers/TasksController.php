@@ -84,6 +84,7 @@ class TasksController extends \App\Controller\AppController
     $sql = "
             SELECT  t.task_id as t_id, 
                     t.task_desc as t_desc,
+                    t.task_due_date as t_due_date,
                     p.project_desc as t_project,
                     p.project_id as t_project_id,
                     pt.task_sort_idx as t_idx
@@ -113,6 +114,7 @@ class TasksController extends \App\Controller\AppController
       $tasks[] = array(
         'id' => $task['t_id'], 
         'desc' => $task['t_desc'],
+        'dueDate' => $task['t_due_date'],
         'project' => $task['t_project'],
         'project_id' => $task['t_project_id'],
         'sortIdx' => $task['t_idx']

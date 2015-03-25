@@ -742,7 +742,8 @@
     didInsertElement: function() {
       Ember.run.scheduleOnce('afterRender', this, function() {
         this.$().datepicker({
-          showButtonPanel: true
+          showButtonPanel: true,
+          dateFormat: 'yy-mm-dd'
         });
       });
     },
