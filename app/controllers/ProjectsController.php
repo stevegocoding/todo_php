@@ -65,7 +65,6 @@ class ProjectsController extends \App\Controller\AppController
     $req = json_decode($body);
     
     $dbCon = DBConFactory::createConnection();
-    $dbCon->getHandle();
     $columnName = "project_{$property}";
     $sql = "UPDATE projects SET {$columnName}=:value WHERE project_id=:id";
     $stmt = $dbCon->getHandle()->prepare($sql);

@@ -180,17 +180,9 @@
         data: JSON.stringify(newTask)
       });
     },
-    updateDesc: function(data) {
+    updateTask: function(data) {
       return $.ajax({
-        url: '/tasks/desc',
-        type: 'PUT',
-        dataType: 'JSON',
-        data: JSON.stringify(data)
-      });
-    },
-    updateDueDate: function(data) {
-      return $.ajax({
-        url: '/tasks/duedate',
+        url: '/tasks/' + data.id,
         type: 'PUT',
         dataType: 'JSON',
         data: JSON.stringify(data)
@@ -282,50 +274,6 @@
       }
     })
   });
-
-  App.GroupableMixin = Ember.Mixin.create({
-    groupProperty: null,
-
-    groupedContent: Ember.computed('content', 'groupProperty', function() {
-      return this.groupBy(this.get('content'), this.get('groupProperty'));
-    }),
-    groupBy: function(content, groupProperty) {
-      var groupedContent = [];
-      content.forEach(function(item) { 
-        var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
-
-        if (!hasGroup) { 
-          groupedContent.pushObject(App.DaysGroup.create({
-            header: item.get(groupProperty),
-            dueRelative: item.get('dueRelative'),
-            list: []
-          }));
-        }
-        groupedContent.findBy('header', item.get(groupProperty)).get('list').pushObject(item);
-      });
-      return groupedContent;
-    }
-  });
-  
-  App.AppDateFilteredTasksController = Ember.ArrayController.extend(App.GroupableMixin, {
-    daysToFilterName: Ember.Object.create({
-      '-1': 'overdue',
-      '0': 'today',
-      '7': '7days'
-    }),
-    queryParams: ['dueInDays'],
-    dueInDays: null,
-    
-    groupProperty: 'dueDate',
-    taskGroups: Ember.computed.alias('groupedContent'),
-      
-    resetController: function (controller, isExiting, transition) {
-      if (isExiting) {
-        // isExiting would be false if only the route's model was changing
-        controller.set('dueInDays', '0');
-      }
-    }
-  });
   
   App.TasksControllerMixin = Ember.Mixin.create({
     nextID: Ember.computed(function() {
@@ -384,10 +332,67 @@
         }
       }
     },
-    updateTaskDesc: function(params) {
-      console.log('updateTaskDesc');
+    updateTask: function(params) {
+      App.Task.updateTask(params).then(function(respData) {
+        Ember.run(function() {
+          params.deferred.resolve(respData);
+        });
+      },
+      function(error) {
+        params.deferred.reject(error);
+      });
     }
   });
+
+  App.GroupableMixin = Ember.Mixin.create({
+    groupProperty: null,
+
+    groupedContent: Ember.computed('content', 'groupProperty', function() {
+      return this.groupBy(this.get('content'), this.get('groupProperty'));
+    }),
+    groupBy: function(content, groupProperty) {
+      var groupedContent = [];
+      content.forEach(function(item) { 
+        var hasGroup = !!groupedContent.findBy('header', item.get(groupProperty));
+
+        if (!hasGroup) { 
+          groupedContent.pushObject(App.DaysGroup.create({
+            header: item.get(groupProperty),
+            dueRelative: item.get('dueRelative'),
+            list: []
+          }));
+        }
+        groupedContent.findBy('header', item.get(groupProperty)).get('list').pushObject(item);
+      });
+      return groupedContent;
+    }
+  });
+  
+  App.AppDateFilteredTasksController = Ember.ArrayController.extend(App.TasksControllerMixin, App.GroupableMixin, {
+    daysToFilterName: Ember.Object.create({
+      '-1': 'overdue',
+      '0': 'today',
+      '7': '7days'
+    }),
+    queryParams: ['dueInDays'],
+    dueInDays: null,
+    
+    groupProperty: 'dueDate',
+    taskGroups: Ember.computed.alias('groupedContent'),
+      
+    resetController: function (controller, isExiting, transition) {
+      if (isExiting) {
+        // isExiting would be false if only the route's model was changing
+        controller.set('dueInDays', '0');
+      }
+    },
+    actions: {
+      updateTask: function(params) {
+        this.updateTask(params);
+      }
+    }
+  });
+  
   
   App.AppProjectTasksController = Ember.ArrayController.extend(App.TasksControllerMixin, {
     queryParams: ['projectParam'],
@@ -411,8 +416,8 @@
       deleteTask: function(params) {
         this.deleteTask(params);
       },
-      updateTaskDesc: function(params) {
-        this.updateTaskDesc(params);
+      updateTask: function(params) {
+        this.updateTask(params);
       }
     }
   });
@@ -1137,10 +1142,9 @@
       }
       else {
         var params = {
-          data: [{
-            id: item.get('pid'),
-            value: item.get('desc')
-          }]
+          id: item.get('tid'),
+          desc: item.get('desc'),
+          dueDate: item.get('dueDate')
         };
         var deferred = Ember.RSVP.defer();
         deferred.promise.then(function(data) {
@@ -1165,12 +1169,31 @@
       else {
         item.set('editorMode', false);
       }
+    },
+    didUpdateSortable: function(indices) {
+      this.rerender();
+      /*
+      var self = this;
+      var deferred = Ember.RSVP.defer();
+      deferred.promise.then(function(data) {
+        console.log('update sortable deferred OK');
+      },
+      function(reason) {
+        console.log('deferred Failed! -- ' + reason);
+      });
+      var params = {
+        priorities: indices,
+        deferred: deferred
+      };
+      this.sendAction('updateSortable', params);
+      */
     }
   });
  
   App.TasksListItemComponent = Ember.Component.extend(App.JQueryUISortableMixin, {
     tagName: 'li',
     classNames: ['ui-sortable-handle', 'sortable-list-item', 'tasks-list-item'],
+    classNameBindings: ['isDone:is-done'],
     editorMode: false,
     
     isDone: false,

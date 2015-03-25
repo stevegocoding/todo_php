@@ -244,6 +244,25 @@ class TasksController extends \App\Controller\AppController
 
   public function findDone() 
   {
+  }
+
+  public function updateTask($id) 
+  {
+    $body = $this->request->getBody();
+    $req = json_decode($body);
     
+    $dbCon = DBConFactory::createConnection();
+    $sql = "UPDATE tasks SET task_desc=:taskDesc, task_due_date=:taskDueDate  WHERE task_id=:taskID";
+    $stmt = $dbCon->getHandle()->prepare($sql);
+    $stmt->bindParam(':taskID', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':taskDesc', $req->desc, PDO::PARAM_STR);
+    $stmt->bindParam(':taskDueDate', $req->dueDate, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $resp = array(
+      'id' => $id
+    );
+    $this->response->header('Content-Type', 'application/json');
+    echo json_encode($resp, JSON_NUMERIC_CHECK);
   }
 }

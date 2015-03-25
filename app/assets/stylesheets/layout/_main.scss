@@ -69,6 +69,12 @@
     table-layout: fixed;
   }
   
+  .is-done {
+    .sortable-list-item-content {
+      text-decoration: line-through;
+    }
+  }
+  
   .tasks-list-item {
     @include main-content-list-item(10px 0 10px 0);
     .handle-cell {
