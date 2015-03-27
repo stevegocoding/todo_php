@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3e60824c193a90f8601222fea6140342",
+    "hash": "13e6c7b94a24e6e022ecdb41e8c2f15b",
     "packages": [
         {
             "name": "codegyre/robo",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codegyre/Robo.git",
-                "reference": "b4f9bf742320b0a77f526c479cbb6620a0120aab"
+                "reference": "1057a323007efa67561ed82f924e23db503379a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codegyre/Robo/zipball/b4f9bf742320b0a77f526c479cbb6620a0120aab",
-                "reference": "b4f9bf742320b0a77f526c479cbb6620a0120aab",
+                "url": "https://api.github.com/repos/Codegyre/Robo/zipball/1057a323007efa67561ed82f924e23db503379a5",
+                "reference": "1057a323007efa67561ed82f924e23db503379a5",
                 "shasum": ""
             },
             "require": {
@@ -55,7 +55,7 @@
                 }
             ],
             "description": "Modern task runner",
-            "time": "2015-02-24 02:02:42"
+            "time": "2015-03-23 22:11:53"
         },
         {
             "name": "fzaninotto/faker",
@@ -63,12 +63,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "40426f77f030b6fb45951be920ff1036b2f423d2"
+                "reference": "81f8e9439d0041866849c05d334584ea31c7b05e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/40426f77f030b6fb45951be920ff1036b2f423d2",
-                "reference": "40426f77f030b6fb45951be920ff1036b2f423d2",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/81f8e9439d0041866849c05d334584ea31c7b05e",
+                "reference": "81f8e9439d0041866849c05d334584ea31c7b05e",
                 "shasum": ""
             },
             "require": {
@@ -98,7 +98,7 @@
             ],
             "authors": [
                 {
-                    "name": "François Zaninotto"
+                    "name": "Francois Zaninotto"
                 }
             ],
             "description": "Faker is a PHP library that generates fake data for you.",
@@ -107,7 +107,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2015-02-27 08:30:07"
+            "time": "2015-03-18 16:46:58"
         },
         {
             "name": "henrikbjorn/lurker",
@@ -167,55 +167,6 @@
                 "watching"
             ],
             "time": "2014-12-15 08:28:08"
-        },
-        {
-            "name": "jayc89/slim-handlebars",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jayc89/slim-handlebars.git",
-                "reference": "74976644ef0f10e28b6d1d326f2de8e6a88491df"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jayc89/slim-handlebars/zipball/74976644ef0f10e28b6d1d326f2de8e6a88491df",
-                "reference": "74976644ef0f10e28b6d1d326f2de8e6a88491df",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0",
-                "slim/slim": ">=2.4.0",
-                "xamin/handlebars.php": "0.10.0"
-            },
-            "suggest": {
-                "justblackbird/handlebars.php-helpers": "A set of helpers for Handlebars.php template engine."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Slim\\Handlebars\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jamie Cressey",
-                    "email": "jamiecressey89@gmail.com",
-                    "homepage": "https://github.com/jayc89"
-                }
-            ],
-            "description": "Handlebars View Parser package for the Slim Framework",
-            "homepage": "http://github.com/jayc89/Slim-Handlebars",
-            "keywords": [
-                "extensions",
-                "handlebars",
-                "slimphp",
-                "templating"
-            ],
-            "time": "2015-01-30 10:26:01"
         },
         {
             "name": "robmorgan/phinx",
@@ -326,71 +277,18 @@
             "time": "2014-04-05 18:33:59"
         },
         {
-            "name": "slim/views",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/codeguy/Slim-Views.git",
-                "reference": "8561c785e55a39df6cb6f95c3aba3281a60ed5b0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/codeguy/Slim-Views/zipball/8561c785e55a39df6cb6f95c3aba3281a60ed5b0",
-                "reference": "8561c785e55a39df6cb6f95c3aba3281a60ed5b0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "slim/slim": ">=2.4.0"
-            },
-            "suggest": {
-                "smarty/smarty": "Smarty templating system",
-                "twig/twig": "Twig templating system"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Slim\\Views\\": "./"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Josh Lockhart",
-                    "email": "info@joshlockhart.com",
-                    "homepage": "http://www.joshlockhart.com/"
-                },
-                {
-                    "name": "Andrew Smith",
-                    "email": "a.smith@silentworks.co.uk",
-                    "homepage": "http://thoughts.silentworks.co.uk/"
-                }
-            ],
-            "description": "Smarty and Twig View Parser package for the Slim Framework",
-            "homepage": "http://github.com/codeguy/Slim-Views",
-            "keywords": [
-                "extensions",
-                "slimphp",
-                "templating"
-            ],
-            "time": "2014-12-09 23:48:51"
-        },
-        {
             "name": "symfony/config",
             "version": "2.6.x-dev",
             "target-dir": "Symfony/Component/Config",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Config.git",
-                "reference": "901bb1e0fdad75ac89b2ce0699bad65185ddaa44"
+                "reference": "75b33bee011b60ad4907064906f257e0c7efd8db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Config/zipball/901bb1e0fdad75ac89b2ce0699bad65185ddaa44",
-                "reference": "901bb1e0fdad75ac89b2ce0699bad65185ddaa44",
+                "url": "https://api.github.com/repos/symfony/Config/zipball/75b33bee011b60ad4907064906f257e0c7efd8db",
+                "reference": "75b33bee011b60ad4907064906f257e0c7efd8db",
                 "shasum": ""
             },
             "require": {
@@ -427,7 +325,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-25 12:51:23"
+            "time": "2015-03-22 16:55:57"
         },
         {
             "name": "symfony/console",
@@ -436,12 +334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "0f670aba3dd4750a7539890f401f609c1bad2453"
+                "reference": "c5735dc28fec8117a686bbe6db71e3bb6de2a0a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/0f670aba3dd4750a7539890f401f609c1bad2453",
-                "reference": "0f670aba3dd4750a7539890f401f609c1bad2453",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/c5735dc28fec8117a686bbe6db71e3bb6de2a0a1",
+                "reference": "c5735dc28fec8117a686bbe6db71e3bb6de2a0a1",
                 "shasum": ""
             },
             "require": {
@@ -485,7 +383,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-24 11:52:21"
+            "time": "2015-03-22 16:55:57"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -494,12 +392,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "ce9246f87133be616f5db06b5e162f5210f95280"
+                "reference": "186349c2966529804e38685f671e64746dde220b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/ce9246f87133be616f5db06b5e162f5210f95280",
-                "reference": "ce9246f87133be616f5db06b5e162f5210f95280",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/186349c2966529804e38685f671e64746dde220b",
+                "reference": "186349c2966529804e38685f671e64746dde220b",
                 "shasum": ""
             },
             "require": {
@@ -544,7 +442,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-18 10:38:04"
+            "time": "2015-03-13 17:50:01"
         },
         {
             "name": "symfony/filesystem",
@@ -553,12 +451,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "d4ae276ad15d0ae17ae07bd8b7de1c5381217283"
+                "reference": "0d0790beeb3bdb997a6cb2d6f4e53f607337efe5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/d4ae276ad15d0ae17ae07bd8b7de1c5381217283",
-                "reference": "d4ae276ad15d0ae17ae07bd8b7de1c5381217283",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/0d0790beeb3bdb997a6cb2d6f4e53f607337efe5",
+                "reference": "0d0790beeb3bdb997a6cb2d6f4e53f607337efe5",
                 "shasum": ""
             },
             "require": {
@@ -594,7 +492,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-18 10:38:04"
+            "time": "2015-03-22 16:57:18"
         },
         {
             "name": "symfony/finder",
@@ -603,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "5db34b8c6ab8c04452a5660ad9535766940b5348"
+                "reference": "4ceb3c184e5008f95f56a85916cb3d2226f7da38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/5db34b8c6ab8c04452a5660ad9535766940b5348",
-                "reference": "5db34b8c6ab8c04452a5660ad9535766940b5348",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/4ceb3c184e5008f95f56a85916cb3d2226f7da38",
+                "reference": "4ceb3c184e5008f95f56a85916cb3d2226f7da38",
                 "shasum": ""
             },
             "require": {
@@ -644,7 +542,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-21 13:05:27"
+            "time": "2015-03-22 16:57:18"
         },
         {
             "name": "symfony/process",
@@ -653,12 +551,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "068af938416f94e638e5d86f420e9be62c64ecdf"
+                "reference": "e68470654c6ad2c402f3df90a4461966dfd38bec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/068af938416f94e638e5d86f420e9be62c64ecdf",
-                "reference": "068af938416f94e638e5d86f420e9be62c64ecdf",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/e68470654c6ad2c402f3df90a4461966dfd38bec",
+                "reference": "e68470654c6ad2c402f3df90a4461966dfd38bec",
                 "shasum": ""
             },
             "require": {
@@ -694,7 +592,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-24 12:09:34"
+            "time": "2015-03-23 08:18:05"
         },
         {
             "name": "symfony/yaml",
@@ -703,12 +601,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "d286fcdf3bab89d2eebdebf2efefc530bf69b613"
+                "reference": "1f2ce08b9e1ebdca0ffad35d5975c19b0f58daad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/d286fcdf3bab89d2eebdebf2efefc530bf69b613",
-                "reference": "d286fcdf3bab89d2eebdebf2efefc530bf69b613",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1f2ce08b9e1ebdca0ffad35d5975c19b0f58daad",
+                "reference": "1f2ce08b9e1ebdca0ffad35d5975c19b0f58daad",
                 "shasum": ""
             },
             "require": {
@@ -744,174 +642,21 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-24 11:52:21"
-        },
-        {
-            "name": "twig/extensions",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twigphp/Twig-extensions.git",
-                "reference": "33e07209c9f4ee07d688b4d1d49770a244d5bb5d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/33e07209c9f4ee07d688b4d1d49770a244d5bb5d",
-                "reference": "33e07209c9f4ee07d688b4d1d49770a244d5bb5d",
-                "shasum": ""
-            },
-            "require": {
-                "twig/twig": "~1.12"
-            },
-            "require-dev": {
-                "symfony/translation": "~2.3"
-            },
-            "suggest": {
-                "symfony/translation": "Allow the time_diff output to be translated"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Twig_Extensions_": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Common additional features for Twig that do not directly belong in core",
-            "homepage": "http://twig.sensiolabs.org/doc/extensions/index.html",
-            "keywords": [
-                "i18n",
-                "text"
-            ],
-            "time": "2015-02-16 09:42:44"
-        },
-        {
-            "name": "twig/twig",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twigphp/Twig.git",
-                "reference": "19f8d073aaf7cadf6218d88c9f651657cfda9211"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/19f8d073aaf7cadf6218d88c9f651657cfda9211",
-                "reference": "19f8d073aaf7cadf6218d88c9f651657cfda9211",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.7"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.18-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Twig_": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Armin Ronacher",
-                    "email": "armin.ronacher@active-4.com",
-                    "role": "Project Founder"
-                },
-                {
-                    "name": "Twig Team",
-                    "homepage": "http://twig.sensiolabs.org/contributors",
-                    "role": "Contributors"
-                }
-            ],
-            "description": "Twig, the flexible, fast, and secure template language for PHP",
-            "homepage": "http://twig.sensiolabs.org",
-            "keywords": [
-                "templating"
-            ],
-            "time": "2015-02-27 16:10:10"
-        },
-        {
-            "name": "xamin/handlebars.php",
-            "version": "v0.10.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/XaminProject/handlebars.php.git",
-                "reference": "ed57d8f7d75fb9d16ed89652aec9d747e7f440e1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/XaminProject/handlebars.php/zipball/ed57d8f7d75fb9d16ed89652aec9d747e7f440e1",
-                "reference": "ed57d8f7d75fb9d16ed89652aec9d747e7f440e1",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "@stable",
-                "squizlabs/php_codesniffer": "@stable"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Handlebars": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "fzerorubigd",
-                    "email": "fzerorubigd@gmail.com"
-                },
-                {
-                    "name": "Behrooz Shabani (everplays)",
-                    "email": "everplays@gmail.com"
-                }
-            ],
-            "description": "Handlebars processor for php",
-            "homepage": "https://github.com/XaminProject/handlebars.php",
-            "time": "2014-11-18 07:02:04"
+            "time": "2015-03-22 16:55:57"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "slim/views": 20,
         "robmorgan/phinx": 20,
         "codegyre/robo": 20,
-        "fzaninotto/faker": 20,
-        "jayc89/slim-handlebars": 20
+        "fzaninotto/faker": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">= 5.5.0"
+        "php": ">= 5.4.0"
     },
     "platform-dev": []
 }
