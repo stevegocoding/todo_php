@@ -9,11 +9,6 @@ $config['slim'] = array(
   'log.level' => \Slim\Log::DEBUG,
   'log.enabled' => true, 
 
-  // View
-  // 'view' => new \Slim\Views\Twig(),
-  'view' => new \Slim\Handlebars\Handlebars(),
-  'templates.path' => APP_PATH.'views/templates',
-
   // HTTP
   'http.version' => '1.1', 
 
