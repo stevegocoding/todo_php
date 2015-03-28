@@ -5,10 +5,10 @@ session_start();
 if (!defined('__DIR__')) {
    define('__DIR__', dirname(__FILE__));
 }
-define('ROOT_PATH'  , __DIR__.'/');
-define('VENDOR_PATH', __DIR__.'/vendor/');
-define('APP_PATH'   , __DIR__.'/app/');
-define('PUBLIC_PATH', __DIR__.'/public/');
+define('ROOT_PATH'  , __DIR__.'/../');
+define('VENDOR_PATH', __DIR__.'/../vendor/');
+define('APP_PATH'   , __DIR__.'/../app/');
+define('PUBLIC_PATH', __DIR__.'/../public/');
 
 require VENDOR_PATH.'autoload.php';
 
@@ -52,7 +52,9 @@ $app->container->singleton('App/Tasks', function($container) {
 });
 
 
-$app->get('/test', '\App\Controller\DashboardController:index');
+$app->get('/test', function() {
+  echo 'hello';
+});
 
 $app->post('/sessions', '\App\Controller\SessionsController:create');
 $app->post('/sessions/verify', '\App\Controller\SessionsController:verify');
@@ -67,5 +69,4 @@ $app->get('/tasks/project', '\App\Controller\TasksController:findByProject');
 $app->get('/tasks/due', '\App\Controller\TasksController:findDueInDays');
 $app->put('/tasks/:id', '\App\Controller\TasksController:updateTask');
 
-
-return $app;
+$app->run();
