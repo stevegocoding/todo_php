@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-bowercopy');
   grunt.loadNpmTasks('grunt-broccoli-fc');
+  grunt.loadNpmTasks('grunt-rsync');
 
   // Project configuration
   grunt.initConfig({
@@ -32,6 +33,25 @@ module.exports = function (grunt) {
       }
     },
     
+    rsync: {
+      options: {
+        args: ["--verbose"],
+        exclude: [".git*", "*.scss",".DS_Store","bower.json", "Brocfile.js", "Gruntfile.js", "package.json", "node_modules","bower_components","tmp","tools","dist","vendor"],
+        recursive: true
+      },
+      prod: {
+        options: {
+          src: "./",
+          include: ["./app/", "./config/", "./db/", "./lib/", "./public/", "./vendor", "./Robofile.php", "./composer.json", "./composer.lock", "./phinx.yml"],
+          recursive: true,
+          dest: "/home/stevegocoding/www/todoish.magkbdev.com/",
+          host: "stevegocoding@magkbdev.com",
+          ssh: true,
+          port: 999,
+          delete: true // Careful this option could cause data loss, read the docs!
+        }
+      }
+    },
     /**
      * Bowercopy: copy the required assets to proper directories
      **/
