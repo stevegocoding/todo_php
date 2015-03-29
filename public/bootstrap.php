@@ -56,6 +56,12 @@ $app->get('/test', function() {
   echo 'hello';
 });
 
+$app->get('/', function() {
+  $content = file_get_contents('index.html');
+  echo($content);
+});
+
+
 $app->post('/sessions', '\App\Controller\SessionsController:create');
 $app->post('/sessions/verify', '\App\Controller\SessionsController:verify');
 $app->delete('/sessions', '\App\Controller\SessionsController:destroy');
